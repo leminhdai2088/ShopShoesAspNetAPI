@@ -1,25 +1,49 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ShopShoesAPI.common;
+using ShopShoesAPI.product;
 using ShopShoesAPI.user;
 using System.Threading;
 
 namespace ShopShoesAPI.Data
 {
-    public class MyDbContext: DbContext
+    public class MyDbContext: IdentityDbContext<UserEnityIndetity>
     {
         public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) { }
 
-        public DbSet<UserEntity> UserEntity { get; set; }
+        //public DbSet<UserEnityIndetity> UserEnityIndetity { get; set; }
+        public DbSet<ProductEntity> ProductEntity { get; set; }
+        public DbSet<CategoryEntity> CategoryEntity { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserEntity>()
+            modelBuilder.Entity<UserEnityIndetity>()
                 .HasIndex(e => e.Email)
                 .IsUnique();
 
-            modelBuilder.Entity<UserEntity>()
-                .HasIndex(e => e.Phone)
+            modelBuilder.Entity<UserEnityIndetity>()
+                .HasIndex(e => e.PhoneNumber)
                 .IsUnique();
+
+            modelBuilder.Entity<CategoryEntity>()
+                .HasMany(e => e.Products)
+                .WithOne(e => e.Category)
+                .HasForeignKey(e => e.CategoryId)
+                .HasPrincipalKey(e => e.Id);
+
+            base.OnModelCreating(modelBuilder);
+
+            SeedRoles(modelBuilder);
+        }
+
+        private static void SeedRoles(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin"},
+                new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "User" }
+                );
         }
 
         public override int SaveChanges()
@@ -27,11 +51,6 @@ namespace ShopShoesAPI.Data
             AddTimestamps();
             return base.SaveChanges();
         }
-
-        //public sealed override Task<int> SaveChangesAsync()
-        //{
-        //    return this.SaveChangesAsync(cancellationToken);
-        //}
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

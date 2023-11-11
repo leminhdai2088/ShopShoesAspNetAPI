@@ -7,13 +7,13 @@ namespace ShopShoesAPI.auth
         [StringLength(100), Required]
         public string FullName { get; set; }
 
-        [StringLength(100), Required]
+        [EmailAddress, Required]
         public string Email { get; set; }
 
-        [MinLength(6), MaxLength(20), Required]
+        [Required]
         public string Password { get; set; }
 
-        [StringLength(10), Required]
+        [Required, Phone]
         public string Phone { get; set; }
 
         [StringLength(200)]
@@ -22,7 +22,7 @@ namespace ShopShoesAPI.auth
 
     public class LoginDTO
     {
-        [StringLength(100), Required]
+        [StringLength(100), Required, EmailAddress]
         public string Email { get; set; }
 
         [MinLength(6), MaxLength(20), Required]

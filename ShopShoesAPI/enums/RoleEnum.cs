@@ -1,7 +1,8 @@
-﻿namespace ShopShoesAPI.enums
-{ public enum Roles
+﻿namespace ShopShoesAPI.Enums
+{
+    public class Roles
     {
-        User = 0,
-        Admin = 1
+        public const string User = "User";
+        public const string Admin = "Admin";
     }
 }

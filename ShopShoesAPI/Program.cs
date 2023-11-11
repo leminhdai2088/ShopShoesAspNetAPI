@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShopShoesAPI.auth;
 using ShopShoesAPI.common;
 using ShopShoesAPI.Data;
+using ShopShoesAPI.email;
+using ShopShoesAPI.model;
+using ShopShoesAPI.user;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,31 +19,72 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 
 builder.Services.AddControllers();
 
+// Entity Framework
 builder.Services.AddDbContext<MyDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("MyDb"));
 });
 
+// Identity
+builder.Services.AddIdentity<UserEnityIndetity, IdentityRole>()
+    .AddEntityFrameworkStores<MyDbContext>().AddDefaultTokenProviders();
+
+// Add config for require Email
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = true;
+});
+
+// Add Email Config
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
+
+// Scoped
+builder.Services.AddScoped<RoleManager<IdentityRole>>();
+builder.Services.AddScoped<MyDbContext>();
 builder.Services.AddScoped<IAuth, AuthService>();
+builder.Services.AddScoped<IEmail, EmailService>();
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
+
+// Authentication
 var secretKey = builder.Configuration["AppSettings:SecretKey"];
 var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+//{
+//    opt.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        // Tự cấp token
+//        ValidateIssuer = false,
+//        ValidateAudience = false,
+
+//        // Ký vào token
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+
+//        ClockSkew = TimeSpan.Zero
+//    };
+//});
+
+builder.Services.AddAuthentication(options =>
 {
-    opt.TokenValidationParameters = new TokenValidationParameters
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        // Tự cấp token
-        ValidateIssuer = false,
-        ValidateAudience = false,
+        ValidateIssuer = true,
+        ValidateAudience = true,
 
-        // Ký vào token
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
-
-        ClockSkew = TimeSpan.Zero
+        ValidIssuer = builder.Configuration["AppSettings:ValidIssuer"],
+        ValidAudience = builder.Configuration["AppSettings:ValidAudience"],
+        IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes)
     };
 });
 
@@ -60,7 +105,7 @@ builder.Services.AddSwaggerGen(c =>
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
+        Scheme = "Bearer",
         BearerFormat = "JWT"
     });
 
@@ -79,11 +124,6 @@ builder.Services.AddSwaggerGen(c =>
             new string[] { }
         }
     });
-
-    // Include XML comments in Swagger
-    //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    //c.IncludeXmlComments(xmlPath);
 });
 
 var app = builder.Build();

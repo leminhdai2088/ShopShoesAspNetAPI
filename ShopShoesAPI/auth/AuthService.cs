@@ -10,6 +10,9 @@ using ShopShoesAPI.user;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using ShopShoesAPI.Enums;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ShopShoesAPI.auth
 {
@@ -17,127 +20,58 @@ namespace ShopShoesAPI.auth
     {
         private readonly MyDbContext _context;
         private readonly AppSettings _appSettings;
-        
-        public AuthService(MyDbContext context, IOptionsMonitor<AppSettings> optionsMonitor)
+        private readonly UserManager<UserEnityIndetity> userManager;
+        private readonly SignInManager<UserEnityIndetity> signInManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+
+
+        public AuthService(MyDbContext context, IOptionsMonitor<AppSettings> optionsMonitor, UserManager<UserEnityIndetity> userManager,
+            SignInManager<UserEnityIndetity> signInManager,
+            RoleManager<IdentityRole> roleManager     
+            )
         {
-            _context = context;
-            _appSettings = optionsMonitor.CurrentValue;
+            this._context = context;
+            this._appSettings = optionsMonitor.CurrentValue;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            this.roleManager = roleManager;
         }
 
 
 
-        public async Task<TokenDTO> Login(LoginDTO model)
+
+
+        public PayloadTokenDTO VerifyAccessToken(string accressToken)
         {
-            var user = await _context.UserEntity.SingleOrDefaultAsync(e => e.Email == model.Email);
-            if (user == null)
+            string[] bearerToken = accressToken.Split(' ');
+            string type = bearerToken[0];
+            if(type != "Bearer")
             {
-                throw new BadHttpRequestException("Email is not registered!");
+                throw new Exception("Invalid token type");
             }
-            string passwordHashed = user.Password;
-            bool verified = BCrypt.Net.BCrypt.Verify(model.Password, passwordHashed);
+            string token = bearerToken[1];
 
-            if (verified == false)
-            {
-                throw new BadHttpRequestException("Invalid password!");
-            }
-
-
-            var payload = new PayloadTokenDTO
-            {
-                Id = user.Id,
-                Role = user.Role
-            };
-            return new TokenDTO
-            {
-                AccessToken = await GenerateToken(payload, 1),
-                RefreshToken = await GenerateToken(payload, 7)
-            };
-        }
-
-        public async Task<string> GenerateToken(PayloadTokenDTO payload, int exprire)
-        {
-            if(exprire <= 0 ) {
-                throw new BadHttpRequestException("Invaid expire value");
-            }
             var jwtTokenHandler = new JwtSecurityTokenHandler();
-
-            var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
-
-            var tokenDesc = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("Id", payload.Id.ToString()),
-                    new Claim("Role", payload.Role.ToString()),
-                    //new Claim("TokenId", Guid.NewGuid().ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(exprire),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(secretKeyBytes), 
-                    SecurityAlgorithms.HmacSha512Signature)
-            };
-            var token = jwtTokenHandler.CreateToken(tokenDesc);
-
-            return await Task.FromResult(jwtTokenHandler.WriteToken(token));
-        }
-
-      
-
-        public async Task<string> Register(RegisterDTO model)
-        {
-            var isExistsUser = await _context.UserEntity.SingleOrDefaultAsync(e => e.Email == model.Email);
-            if(isExistsUser != null)
-            {
-                throw new BadHttpRequestException("Email is already registered!");
-            }
-            isExistsUser = await _context.UserEntity.SingleOrDefaultAsync(e => e.Phone == model.Phone);
-            if (isExistsUser != null)
-            {
-                throw new BadHttpRequestException("Phone number is already registered!");
-            }
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            var userEntity = new UserEntity
-            {
-                FullName = model.FullName,
-                Email = model.Email,
-                Address = model.Address,
-                Password  = passwordHash,
-                Phone = model.Phone,
-            };
-            await _context.UserEntity.AddAsync(userEntity);
-            
-            await _context.SaveChangesAsync();
-            return "Register successfully!";
-        }
-
-        public async Task<PayloadTokenDTO> VerifyAccessToken(string accressToken)
-        {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
+            var secretKeyBytes = Encoding.UTF8.GetBytes(this._appSettings.SecretKey);
 
             var tokenValidateParam = new TokenValidationParameters
             {
-                // Tự cấp token
-                ValidateIssuer = false,
-                ValidateAudience = false,
+                ValidateIssuer = true,
+                ValidateAudience = true,
 
-                // Ký vào token
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
-
-                ClockSkew = TimeSpan.Zero,
-
-                ValidateLifetime = false // ko kiểm tra hết hạn
+                ValidIssuer = this._appSettings.ValidIssuer,
+                ValidAudience = this._appSettings.ValidAudience,
+                IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes)
             };
             try
             {
                 // check token valid format
-                var tokenInVerification = jwtTokenHandler.ValidateToken(accressToken, tokenValidateParam, out var validatedToken);
+                var tokenInVerification = jwtTokenHandler.ValidateToken(token, tokenValidateParam, out var validatedToken);
 
                 // check thuật toán
-                if(validatedToken is JwtSecurityToken jwtSecurityToken)
+                if (validatedToken is JwtSecurityToken jwtSecurityToken)
                 {
-                    var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase);
+                    var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512Signature, StringComparison.InvariantCultureIgnoreCase);
                     if (!result)
                     {
                         throw new BadHttpRequestException("Invalid token");
@@ -145,31 +79,29 @@ namespace ShopShoesAPI.auth
                 }
 
                 // check access token expire
-                var utcExpireDate = long.Parse(tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+                var utcExpireDate = long.Parse(tokenInVerification?.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
                 var exprireDate = ConvertUnixTimeToDateTime(utcExpireDate);
-                if(exprireDate > DateTime.UtcNow)
+                if (exprireDate > DateTime.UtcNow)
                 {
                     throw new BadHttpRequestException("Token expired");
                 }
 
                 // Extract claims directly from validatedToken
                 var idClaim = tokenInVerification.Claims.FirstOrDefault(c => c.Type == "Id");
-                var roleClaim = tokenInVerification.Claims.FirstOrDefault(c => c.Type == "Role");
-
-                if (idClaim == null || roleClaim == null)
-                {
-                    throw new BadHttpRequestException("Id or Role claim not found in the token");
-                }
-
+                var emailClaim = tokenInVerification.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                var roleClaim = tokenInVerification.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
                 // Access the values
                 var idValue = idClaim.Value;
+                var emailValue = emailClaim.Value;
                 var roleValue = roleClaim.Value;
 
-                return new PayloadTokenDTO
+                PayloadTokenDTO payloadTokenDTO = new PayloadTokenDTO
                 {
-                    Id = int.Parse(idValue),
-                    Role = roleValue == "User" ? Roles.User : Roles.Admin
+                    Id = idValue,
+                    Email = emailValue,
+                    Role = roleValue
                 };
+                return payloadTokenDTO;
             }
             catch (Exception ex)
             {
@@ -183,6 +115,106 @@ namespace ShopShoesAPI.auth
             dateTimeInterval.AddSeconds(utcExpireDate).ToUniversalTime();
 
             return dateTimeInterval;
+        }
+
+        public async Task<IdentityResult> RegisterAsync(RegisterDTO registerDTO)
+        {
+            try
+            {
+                var emailExists = await this.userManager.FindByEmailAsync(registerDTO.Email);
+                if (emailExists != null)
+                {
+                    throw new BadHttpRequestException("Email is already exists");
+                }
+                var phoneExists = await this.userManager.Users.SingleOrDefaultAsync(e => e.PhoneNumber == registerDTO.Phone);
+                if (phoneExists != null) {
+                    throw new BadHttpRequestException("Phone number is already exists");
+
+                }
+                var user = new UserEnityIndetity
+                {
+                    FullName = registerDTO.FullName,
+                    Email = registerDTO.Email,
+                    UserName = registerDTO.Email,
+                    Address = registerDTO.Address,
+                    PhoneNumber = registerDTO.Phone,
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
+
+                if(await this.roleManager.RoleExistsAsync(Roles.User))
+                {
+                    var result =  await this.userManager.CreateAsync(user, registerDTO.Password);
+                    if (!result.Succeeded)
+                    {
+                        throw new BadHttpRequestException("User failed to create");
+                    }
+                    // add role
+                    await this.userManager.AddToRoleAsync(user, Roles.User);
+                    return result;
+                }
+                else
+                {
+                    throw new BadHttpRequestException("Role is not found");
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
+            }
+        }
+
+        public async Task<TokenDTO> LoginAsync(LoginDTO loginDTO)
+        {
+            try
+            {
+                //var result = await this.signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, false, false);
+                var user = await this.userManager.FindByEmailAsync(loginDTO.Email);
+                if (user == null)
+                {
+                    throw new BadHttpRequestException("Email is not registered");
+                }
+                else if (user!= null && (await this.userManager.CheckPasswordAsync(user, loginDTO.Password)) == false)
+                {
+                    throw new BadHttpRequestException("Invalid password");
+                }
+                else
+                {
+                    return new TokenDTO
+                    {
+                        AccessToken = await GenerateTokenAsync(user, (int)ExprireTokenEnum.AccessToken),
+                        RefreshToken = await GenerateTokenAsync(user, (int)ExprireTokenEnum.RefreshToken),
+                    };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new BadHttpRequestException(ex.Message);
+            }
+        }
+
+        private async Task<string> GenerateTokenAsync(UserEnityIndetity user, int exprire)
+        {
+            var authClaims = new List<Claim>
+            {
+                new Claim("Id", user.Id),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+            var userRoles = await this.userManager.GetRolesAsync(user);
+            foreach (var role in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this._appSettings.SecretKey));
+            var token = new JwtSecurityToken(
+                issuer: this._appSettings.ValidIssuer,
+                audience: this._appSettings.ValidAudience,
+                expires: DateTime.Now.AddDays(exprire),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
+                );
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

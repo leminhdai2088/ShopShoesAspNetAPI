@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ShopShoesAPI.enums;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace ShopShoesAPI.user
@@ -9,10 +9,10 @@ namespace ShopShoesAPI.user
         [StringLength(100), Required]
         public string FullName { get; set; }
 
-        [StringLength(100), Required]
+        [EmailAddress, Required]
         public string Email { get; set; }
 
-        [StringLength(10), Required]
+        [Required, Phone]
         public string Phone { get; set; }
 
         [StringLength(200)]
@@ -30,7 +30,8 @@ namespace ShopShoesAPI.user
 
     public class PayloadTokenDTO
     {
-        public int Id { get; set; }
-        public Roles Role { get; set; }
+        public string? Id { get; set; }
+        public string? Email { get; set; }
+        public string? Role { get; set; }
     }
 }

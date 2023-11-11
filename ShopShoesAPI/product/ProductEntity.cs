@@ -1,6 +1,36 @@
-﻿namespace ShopShoesAPI.user
+﻿using ShopShoesAPI.product;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ShopShoesAPI.user
 {
+    [Table("Products")]
     public class ProductEntity
     {
+        [Key]
+        public int Id { get; set; }
+
+        [Required, StringLength(100)]
+        public string Name { get; set; }
+
+        [AllowNull, StringLength(200)]
+        public string Description { get; set; } = null!;
+
+        [Range(0, float.MaxValue), Required]
+        public float Price { get; set; }
+
+        [Range(0, int.MaxValue), Required]
+        public int Quanyity { get; set; }
+
+        public byte Discount { get; set; } = 0;
+
+        public string Image { get; set; } = null!;
+        [Range(0, 5)]
+        public float Rating { get; set; } = 5!;
+
+
+        public int CategoryId { get; set; }
+        public CategoryEntity Category { get; set; }
     }
 }
