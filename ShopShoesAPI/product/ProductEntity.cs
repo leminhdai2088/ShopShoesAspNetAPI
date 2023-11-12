@@ -1,4 +1,6 @@
-﻿using ShopShoesAPI.product;
+﻿using ShopShoesAPI.comment;
+using ShopShoesAPI.order;
+using ShopShoesAPI.product;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -32,5 +34,9 @@ namespace ShopShoesAPI.user
 
         public int CategoryId { get; set; }
         public CategoryEntity Category { get; set; }
+
+        public ICollection<CommentEntity> Comments { get; set; }
+
+        public ICollection<OrderDetailEntity> OrderDetails { get; set; }
     }
 }

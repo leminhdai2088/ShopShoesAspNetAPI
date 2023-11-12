@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "96a87825-dcef-4b69-b238-f2a9b888ef9e",
+                            Id = "575c0ebb-989e-44fd-93aa-62814c06b1e6",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "c8064d73-6730-43e8-b983-4643b5f4a7ea",
+                            Id = "24e7dd71-ca8d-4f40-a169-8241f37abb3d",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -171,6 +171,89 @@ namespace ShopShoesAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ShopShoesAPI.comment.CommentEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("ShopShoesAPI.order.OrderDetailEntity", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Total")
+                        .HasColumnType("real");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("ShopShoesAPI.order.OrderEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PayMethod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("ShopShoesAPI.product.CategoryEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -181,7 +264,8 @@ namespace ShopShoesAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -201,7 +285,8 @@ namespace ShopShoesAPI.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<byte>("Discount")
                         .HasColumnType("tinyint");
@@ -212,7 +297,8 @@ namespace ShopShoesAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<float>("Price")
                         .HasColumnType("real");
@@ -362,6 +448,47 @@ namespace ShopShoesAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ShopShoesAPI.comment.CommentEntity", b =>
+                {
+                    b.HasOne("ShopShoesAPI.user.ProductEntity", "Product")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ShopShoesAPI.order.OrderDetailEntity", b =>
+                {
+                    b.HasOne("ShopShoesAPI.order.OrderEntity", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShopShoesAPI.user.ProductEntity", "Product")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ShopShoesAPI.order.OrderEntity", b =>
+                {
+                    b.HasOne("ShopShoesAPI.user.UserEnityIndetity", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ShopShoesAPI.user.ProductEntity", b =>
                 {
                     b.HasOne("ShopShoesAPI.product.CategoryEntity", "Category")
@@ -373,9 +500,26 @@ namespace ShopShoesAPI.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("ShopShoesAPI.order.OrderEntity", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
             modelBuilder.Entity("ShopShoesAPI.product.CategoryEntity", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("ShopShoesAPI.user.ProductEntity", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("ShopShoesAPI.user.UserEnityIndetity", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

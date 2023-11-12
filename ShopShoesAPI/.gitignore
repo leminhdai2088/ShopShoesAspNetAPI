@@ -11,7 +11,17 @@
 *.sln.docstates
 *.lutconfig
 launchSettings.json
-appsettings.json
+
+
+# ASP.NET
+######################
+
+# Ignore appsettings.json file
+/appsettings.json
+/appsettings.*.json
+
+# Ignore Entity Framework Migrations folder
+/Migrations/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ShopShoesAPI.comment;
 using ShopShoesAPI.common;
+using ShopShoesAPI.order;
 using ShopShoesAPI.product;
 using ShopShoesAPI.user;
 using System.Threading;
@@ -13,25 +15,59 @@ namespace ShopShoesAPI.Data
         public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) { }
 
         //public DbSet<UserEnityIndetity> UserEnityIndetity { get; set; }
-        public DbSet<ProductEntity> ProductEntity { get; set; }
-        public DbSet<CategoryEntity> CategoryEntity { get; set; }
-
+        public DbSet<CategoryEntity> CategoryEntities { get; set; }
+        public DbSet<ProductEntity> ProductEntities { get; set; }
+        public DbSet<CommentEntity> CommentEntities { get; set; }
+        public DbSet<OrderEntity> OrderEntities { get; set; }
+        public DbSet<OrderDetailEntity> OrderDetailEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Unique Email user
             modelBuilder.Entity<UserEnityIndetity>()
                 .HasIndex(e => e.Email)
                 .IsUnique();
 
+            // Unique Phone user
             modelBuilder.Entity<UserEnityIndetity>()
                 .HasIndex(e => e.PhoneNumber)
                 .IsUnique();
 
+            // Product -> Category One to many
             modelBuilder.Entity<CategoryEntity>()
                 .HasMany(e => e.Products)
                 .WithOne(e => e.Category)
                 .HasForeignKey(e => e.CategoryId)
                 .HasPrincipalKey(e => e.Id);
+
+            // Product -> Comment One to many
+            modelBuilder.Entity<ProductEntity>()
+                .HasMany(e => e.Comments)
+                .WithOne(e => e.Product)
+                .HasForeignKey(e => e.ProductId)
+                .HasPrincipalKey(e => e.Id);
+
+            // Primary key order detail
+            modelBuilder.Entity<OrderDetailEntity>().HasKey(od => new {od.OrderId, od.ProductId });
+
+            // Order -> OrderDetail One to many
+            modelBuilder.Entity<OrderDetailEntity>()
+                .HasOne(od => od.Order)
+                .WithMany(o => o.OrderDetails)
+                .HasForeignKey(od => od.OrderId);
+
+            // Product -> OrderDetail One to many
+            modelBuilder.Entity<OrderDetailEntity>()
+                .HasOne(od => od.Product)
+                .WithMany(o => o.OrderDetails)
+                .HasForeignKey(od => od.ProductId);
+
+            // User -> Order One to many
+            modelBuilder.Entity<OrderEntity>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId);
+              
 
             base.OnModelCreating(modelBuilder);
 
