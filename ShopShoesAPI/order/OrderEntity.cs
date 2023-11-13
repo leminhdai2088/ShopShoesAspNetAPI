@@ -1,4 +1,5 @@
-﻿using ShopShoesAPI.Enums;
+﻿using ShopShoesAPI.common;
+using ShopShoesAPI.Enums;
 using ShopShoesAPI.user;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

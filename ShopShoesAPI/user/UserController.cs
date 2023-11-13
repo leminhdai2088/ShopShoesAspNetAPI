@@ -16,8 +16,6 @@ namespace ShopShoesAPI.user
     {
         private readonly IUser _iUser;
         private readonly IAuth _iAuth;
-
-
         private readonly PayloadTokenDTO payloadTokenDTO;
         private readonly string userId;
         public UserController(IUser iUser, IAuth iAuth, IHttpContextAccessor httpContextAccessor)

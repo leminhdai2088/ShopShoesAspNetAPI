@@ -53,22 +53,6 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 var secretKey = builder.Configuration["AppSettings:SecretKey"];
 var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
 
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
-//{
-//    opt.TokenValidationParameters = new TokenValidationParameters
-//    {
-//        // Tự cấp token
-//        ValidateIssuer = false,
-//        ValidateAudience = false,
-
-//        // Ký vào token
-//        ValidateIssuerSigningKey = true,
-//        IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
-
-//        ClockSkew = TimeSpan.Zero
-//    };
-//});
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
