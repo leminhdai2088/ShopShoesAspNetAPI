@@ -43,6 +43,7 @@ builder.Services.AddSingleton(emailConfig);
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 builder.Services.AddScoped<MyDbContext>();
 builder.Services.AddScoped<IAuth, AuthService>();
+builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddScoped<IEmail, EmailService>();
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));

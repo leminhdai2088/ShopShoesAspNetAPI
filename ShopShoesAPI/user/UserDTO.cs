@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ShopShoesAPI.user
 {
-    public class UpdateUserDTO
+    public class UserDTO
     {
         [StringLength(100), Required]
         public string FullName { get; set; }
@@ -17,6 +18,14 @@ namespace ShopShoesAPI.user
 
         [StringLength(200)]
         public string Address { get; set; }
+    }
+    public class UpdateUserDTO
+    {
+        [StringLength(100), AllowNull]
+        public string? FullName { get; set; }
+
+        [StringLength(200), AllowNull]
+        public string? Address { get; set; }
     }
 
     public class ChangePasswordDTO
