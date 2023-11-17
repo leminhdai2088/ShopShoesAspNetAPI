@@ -12,6 +12,10 @@ using ShopShoesAPI.model;
 using ShopShoesAPI.user;
 using System.Text;
 
+using NRedisStack;
+using NRedisStack.RedisStackCommands;
+using StackExchange.Redis;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Initialize the Configuration variable
@@ -50,6 +54,17 @@ builder.Services.AddScoped<IAdmin, AdminService>();
 
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+// redis
+var redisUri = builder.Configuration["AppSettings:RedisURI"];
+//builder.Services.AddSingleton<IDatabase>( provider =>
+//{
+//    var conn = ConnectionMultiplexer.Connect(redisUri);
+//    return conn.GetDatabase();
+//});
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+    ConnectionMultiplexer.Connect("127.0.0.1:6379")
+);
 
 
 // Authentication

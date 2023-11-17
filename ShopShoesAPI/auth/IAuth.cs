@@ -14,5 +14,6 @@ namespace ShopShoesAPI.auth
         ///////////////////////////
         public Task<IdentityResult> RegisterAsync(RegisterDTO registerDTO);
         public Task<TokenDTO> LoginAsync(LoginDTO loginDTO);
+        public Task<string> LogoutAsync(string userId);
     }
 }

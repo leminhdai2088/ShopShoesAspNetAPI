@@ -7,5 +7,6 @@ namespace ShopShoesAPI.admin
     {
         // user
         public Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate); 
+        public Task<string> DeleteUser(string id);
     }
 }

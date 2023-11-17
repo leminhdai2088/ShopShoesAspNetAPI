@@ -44,6 +44,16 @@ namespace ShopShoesAPI.auth
             };
         }
 
+        [HttpDelete("logout")]
+        public async Task<ApiRespone> Logout([FromBody] string userId)
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Message = await _iAuth.LogoutAsync(userId)
+            }; 
+        }
+
         [HttpGet("test")]
         [Authorize(Roles = Roles.User)]
         public IActionResult Test()

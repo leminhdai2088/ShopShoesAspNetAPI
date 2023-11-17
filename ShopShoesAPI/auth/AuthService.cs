@@ -13,6 +13,9 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using ShopShoesAPI.Enums;
 using Microsoft.Extensions.DependencyInjection;
+using NRedisStack;
+using NRedisStack.RedisStackCommands;
+using StackExchange.Redis;
 
 namespace ShopShoesAPI.auth
 {
@@ -23,11 +26,12 @@ namespace ShopShoesAPI.auth
         private readonly UserManager<UserEnityIndetity> userManager;
         private readonly SignInManager<UserEnityIndetity> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
-
+        private readonly IDatabase redisDatabase;
 
         public AuthService(MyDbContext context, IOptionsMonitor<AppSettings> optionsMonitor, UserManager<UserEnityIndetity> userManager,
             SignInManager<UserEnityIndetity> signInManager,
-            RoleManager<IdentityRole> roleManager     
+            RoleManager<IdentityRole> roleManager,
+            IConnectionMultiplexer redisConnectionMultiplexer
             )
         {
             this._context = context;
@@ -35,6 +39,8 @@ namespace ShopShoesAPI.auth
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.roleManager = roleManager;
+
+            this.redisDatabase = redisConnectionMultiplexer.GetDatabase();
         }
 
 
@@ -179,10 +185,20 @@ namespace ShopShoesAPI.auth
                 }
                 else
                 {
+                    var accessToken = await GenerateTokenAsync(user, (int)ExprireTokenEnum.AccessToken);
+                    var refreshToken = await GenerateTokenAsync(user, (int)ExprireTokenEnum.RefreshToken);
+
+                    TimeSpan expiration = TimeSpan.FromDays((int)ExprireTokenEnum.RefreshToken);
+
+                    bool resultSaveTokenToRedis = await this.redisDatabase.StringSetAsync(user.Id, refreshToken, expiration);
+                    if (resultSaveTokenToRedis == false)
+                    {
+                        throw new Exception("Failed to save refresh token");
+                    }
                     return new TokenDTO
                     {
-                        AccessToken = await GenerateTokenAsync(user, (int)ExprireTokenEnum.AccessToken),
-                        RefreshToken = await GenerateTokenAsync(user, (int)ExprireTokenEnum.RefreshToken),
+                        AccessToken = accessToken,
+                        RefreshToken = refreshToken,
                     };
                 }
 
@@ -214,7 +230,29 @@ namespace ShopShoesAPI.auth
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
                 );
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            return tokenString;
+        }
+
+        public async Task<string> LogoutAsync(string userId)
+        {
+            try
+            {
+                string token = await this?.redisDatabase.StringGetAsync(userId);
+                if (string.IsNullOrEmpty(token))
+                {
+                    throw new InvalidOperationException("You are not logged into the system yet");
+                }
+                bool resultDeltoken = await this.redisDatabase.KeyDeleteAsync(userId);
+                if (resultDeltoken == false)
+                {
+                    throw new Exception("Cannot logout");
+                }
+                return "Log out";
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

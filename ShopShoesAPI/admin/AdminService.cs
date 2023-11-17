@@ -11,6 +11,12 @@ namespace ShopShoesAPI.admin
         public AdminService(UserManager<UserEnityIndetity> userManager) {
             this.userManager = userManager;
         }
+
+        public Task<string> DeleteUser(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate)
         {
             try
@@ -48,6 +54,29 @@ namespace ShopShoesAPI.admin
             {
                 throw new Exception(ex.Message);
             }
+
+             async Task<string> DeleteUser(string id)
+            {
+                try
+                {
+                    var user = await this.userManager.FindByIdAsync(id);
+                    if (user == null)
+                        throw new BadHttpRequestException("User is not found");
+
+                    var result = await this.userManager.DeleteAsync(user);
+                    if (result.Succeeded)
+                    {
+                        return "Delete user successfully";
+                    }
+                    return "Delete user failure";
+
+                }
+                catch (Exception ex )
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+
         }
     }
 }
