@@ -10,11 +10,7 @@ using ShopShoesAPI.user;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 using ShopShoesAPI.Enums;
-using Microsoft.Extensions.DependencyInjection;
-using NRedisStack;
-using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 
 namespace ShopShoesAPI.auth
@@ -41,6 +37,7 @@ namespace ShopShoesAPI.auth
             this.roleManager = roleManager;
 
             this.redisDatabase = redisConnectionMultiplexer.GetDatabase();
+            this.redisDatabase.StringSet("huhu", "hihi");
         }
 
 

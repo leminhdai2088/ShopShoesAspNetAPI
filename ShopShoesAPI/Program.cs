@@ -57,13 +57,8 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 
 // redis
 var redisUri = builder.Configuration["AppSettings:RedisURI"];
-//builder.Services.AddSingleton<IDatabase>( provider =>
-//{
-//    var conn = ConnectionMultiplexer.Connect(redisUri);
-//    return conn.GetDatabase();
-//});
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
-    ConnectionMultiplexer.Connect("127.0.0.1:6379")
+    ConnectionMultiplexer.Connect(redisUri)
 );
 
 
