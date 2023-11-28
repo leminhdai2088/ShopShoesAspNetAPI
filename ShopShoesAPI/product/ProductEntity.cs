@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ShopShoesAPI.user
+namespace ShopShoesAPI.product
 {
     [Table("Products")]
     public class ProductEntity
@@ -23,7 +23,7 @@ namespace ShopShoesAPI.user
         public float Price { get; set; }
 
         [Range(0, int.MaxValue), Required]
-        public int Quanyity { get; set; }
+        public int Quantity { get; set; }
 
         public byte Discount { get; set; } = 0;
 
