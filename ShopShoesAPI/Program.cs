@@ -10,6 +10,7 @@ using ShopShoesAPI.Data;
 using ShopShoesAPI.email;
 using ShopShoesAPI.model;
 using ShopShoesAPI.user;
+using ShopShoesAPI.product;
 using System.Text;
 
 using NRedisStack;
@@ -53,6 +54,7 @@ builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddScoped<IEmail, EmailService>();
 builder.Services.AddScoped<IAdmin, AdminService>();
 builder.Services.AddScoped<ICart, CartService>();
+builder.Services.AddScoped<IProduct, ProductService>();
 
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
