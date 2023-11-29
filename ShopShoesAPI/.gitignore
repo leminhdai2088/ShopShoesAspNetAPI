@@ -18,7 +18,7 @@
 launchSettings.json
 
 # Ignore appsettings.json file
-/appsettings.json
+appsettings.json
 /appsettings.*.json
 
 # Ignore Entity Framework Migrations folder
