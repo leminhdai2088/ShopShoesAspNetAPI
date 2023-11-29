@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ShopShoesAPI.common;
 using ShopShoesAPI.Data;
 using ShopShoesAPI.email;
+using ShopShoesAPI.product;
 
 namespace ShopShoesAPI.user
 {
@@ -10,22 +12,19 @@ namespace ShopShoesAPI.user
     {
         private readonly MyDbContext _context;
         private readonly AppSettings _appSettings;
-        private readonly ProductManager<ProductEntity> productManager;
         
         
-        public ProductService(MyDbContext context, IOptionsMonitor<AppSettings> optionsMonitor,
-            ProductManager<ProductEntity> productManager)
+        public ProductService(MyDbContext context, IOptionsMonitor<AppSettings> optionsMonitor)
         {
             this._context = context;
             this._appSettings = optionsMonitor.CurrentValue;
-            this.productManager = productManager;
         }
 
         public async Task<List<ProductDTO>> GetAllProducts()
         {
             try
             {
-                var products = _context.Products
+                var products = _context.ProductEntities
                 .Select(p => new ProductDTO
                 {
                     Id = p.Id,
@@ -53,7 +52,7 @@ namespace ShopShoesAPI.user
         {
             try
             {
-                var products = await _context.Products
+                var products = await _context.ProductEntities
                     .Where(p => p.Name.Contains(searchString) || p.Description.Contains(searchString))
                     .Select(p => new ProductDTO
                     {
@@ -94,7 +93,7 @@ namespace ShopShoesAPI.user
                     // Map other properties if necessary
                 };
 
-                _context.Products.Add(newProduct);
+                _context.Add(newProduct);
                 await _context.SaveChangesAsync();
 
                 return "Create product Successfully"; // You may return the created product data if needed
@@ -108,13 +107,13 @@ namespace ShopShoesAPI.user
         {
             try
             {
-                var product = await _context.Products.FindAsync(productId);
+                var product = await _context.ProductEntities.FindAsync(productId);
                 if (product == null)
                 {
                     return false;
                 }
 
-                _context.Products.Remove(product);
+                _context.ProductEntities.Remove(product);
                 await _context.SaveChangesAsync();
                 return true;
             }

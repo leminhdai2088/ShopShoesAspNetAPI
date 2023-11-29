@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using ShopShoesAPI.user;
+using ShopShoesAPI.product;
 
 namespace ShopShoesAPI.comment
 {

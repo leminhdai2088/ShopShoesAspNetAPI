@@ -1,4 +1,5 @@
-﻿using ShopShoesAPI.user;
+﻿using ShopShoesAPI.product;
+using ShopShoesAPI.user;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

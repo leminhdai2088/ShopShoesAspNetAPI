@@ -46,7 +46,7 @@ namespace ShopShoesAPI.product
         {
             try
             {
-                var result = await _productService.DeleteProduct(productId);
+                var result = await iProduct.DeleteProduct(productId);
                 if (result)
                 {
                     return Ok("Product deleted successfully");

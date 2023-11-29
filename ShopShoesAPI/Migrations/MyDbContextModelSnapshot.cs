@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f70fec37-d79b-49db-a433-5a05c97c9261",
+                            Id = "767a8db7-b97e-4614-8f10-7545e57c5afe",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "bcbb4042-64a2-4ef5-95da-bc2352d46b2d",
+                            Id = "2f5c57b7-c51b-4535-8c1d-b9703b62f12c",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -275,7 +275,7 @@ namespace ShopShoesAPI.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("ShopShoesAPI.user.ProductEntity", b =>
+            modelBuilder.Entity("ShopShoesAPI.product.ProductEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -306,7 +306,7 @@ namespace ShopShoesAPI.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
-                    b.Property<int>("Quanyity")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<float>("Rating")
@@ -453,7 +453,7 @@ namespace ShopShoesAPI.Migrations
 
             modelBuilder.Entity("ShopShoesAPI.comment.CommentEntity", b =>
                 {
-                    b.HasOne("ShopShoesAPI.user.ProductEntity", "Product")
+                    b.HasOne("ShopShoesAPI.product.ProductEntity", "Product")
                         .WithMany("Comments")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -470,7 +470,7 @@ namespace ShopShoesAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopShoesAPI.user.ProductEntity", "Product")
+                    b.HasOne("ShopShoesAPI.product.ProductEntity", "Product")
                         .WithMany("OrderDetails")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -492,7 +492,7 @@ namespace ShopShoesAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ShopShoesAPI.user.ProductEntity", b =>
+            modelBuilder.Entity("ShopShoesAPI.product.ProductEntity", b =>
                 {
                     b.HasOne("ShopShoesAPI.product.CategoryEntity", "Category")
                         .WithMany("Products")
@@ -513,7 +513,7 @@ namespace ShopShoesAPI.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("ShopShoesAPI.user.ProductEntity", b =>
+            modelBuilder.Entity("ShopShoesAPI.product.ProductEntity", b =>
                 {
                     b.Navigation("Comments");
 
