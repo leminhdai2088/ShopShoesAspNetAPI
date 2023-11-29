@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShopShoesAPI.auth;
 using ShopShoesAPI.Enums;
+using ShopShoesAPI.order;
+using ShopShoesAPI.user;
 
 namespace ShopShoesAPI.cart
 {
@@ -11,9 +14,16 @@ namespace ShopShoesAPI.cart
     public class CartController : ControllerBase
     {
         private readonly ICart _cartService;
-        public CartController(ICart cartService)
+        private readonly IAuth _iAuth;
+        private readonly PayloadTokenDTO payloadTokenDTO;
+        private readonly string userId;
+        public CartController(ICart cartService, IAuth iAuth, IHttpContextAccessor httpContextAccessor)
         {
             _cartService = cartService;
+            _iAuth = iAuth;
+            var authorizationHeader = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
+            payloadTokenDTO = _iAuth.VerifyAccessToken(authorizationHeader!);
+            userId = payloadTokenDTO?.Id;
         }
         [HttpGet]
         public async Task<IActionResult> GetCartItems()
@@ -48,6 +58,20 @@ namespace ShopShoesAPI.cart
         {
             var total = await _cartService.CalculateTotalAsync(HttpContext);
             return Ok(total);
+        }
+
+        [HttpPost("checkout")]
+        public async Task<IActionResult> Checkout([FromBody] OrderDTO orderDTO)
+        {
+            try
+            {
+                var order = await _cartService.CheckoutAsync(HttpContext, userId, orderDTO);
+                return Ok(order);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     public enum PayMethod
     {
+        Cash,
         VNPay,
         Momo,
         ZaloPay

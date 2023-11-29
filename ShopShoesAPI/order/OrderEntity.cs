@@ -15,12 +15,16 @@ namespace ShopShoesAPI.order
         public string Address { get; set; }
         [Required]
         public OrderStatusEnum Status { get; set; } = OrderStatusEnum.Pending;
-        public string Note { get; set; }
-        public PayMethod PayMethod { get; set; } = PayMethod.Momo;
+        public string Note { get; set; } = null!;
+        public PayMethod PayMethod { get; set; } = PayMethod.Cash;
         [Required, Phone]
         public string Phone { get; set; }
 
         public string UserId { get; set; }
+
+        [Required]
+        public decimal Total { get; set; }
+
         public UserEnityIndetity User { get; set; }
 
         public ICollection<OrderDetailEntity> OrderDetails { get; set; }

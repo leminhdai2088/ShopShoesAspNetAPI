@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4b5c3215-97ab-478a-a187-46a69fde0937",
+                            Id = "f70fec37-d79b-49db-a433-5a05c97c9261",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "1981589b-d735-422c-9a40-8ef4055a9034",
+                            Id = "bcbb4042-64a2-4ef5-95da-bc2352d46b2d",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -242,6 +242,9 @@ namespace ShopShoesAPI.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("UserId")
                         .IsRequired()

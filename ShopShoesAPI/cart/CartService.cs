@@ -1,9 +1,20 @@
-﻿using System.Text.Json;
+﻿using Microsoft.AspNetCore.Identity;
+using ShopShoesAPI.Data;
+using ShopShoesAPI.order;
+using ShopShoesAPI.user;
+using System.Text.Json;
 
 namespace ShopShoesAPI.cart
 {
     public class CartService : ICart
     {
+        private readonly MyDbContext _context;
+        private readonly UserManager<UserEnityIndetity> userManager;
+        public CartService(MyDbContext context, UserManager<UserEnityIndetity> userManager)
+        {
+            this._context = context;
+            this.userManager = userManager;
+        }
         public async Task<List<CartDTO>> GetCartItemsAsync(HttpContext httpContext)
         {
             var cart = httpContext.Session.GetString("Cart");
@@ -58,6 +69,64 @@ namespace ShopShoesAPI.cart
 
             decimal total = (decimal)cartItems.Sum(item => item.Price * item.Quantity);
             return total;
+        }
+
+        public async Task<OrderEntity> CheckoutAsync(HttpContext httpContext, string userId, OrderDTO orderDTO)
+        {
+            try
+            {
+                var cartItems = await GetCartItemsAsync(httpContext);
+                if(cartItems == null)
+                {
+                    throw new Exception("Don't have item in the cart");
+                }
+
+                var user = await this.userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User is not found");
+                }
+
+                // Tạo đơn đặt hàng
+                var order = new OrderEntity
+                {
+                    UserId = userId,
+                    Phone = orderDTO.Phone ?? user.PhoneNumber, 
+                    Address = orderDTO.Address ?? user.Address,
+                    Note = orderDTO.Note ?? ""
+                };
+                order.Total = await CalculateTotalAsync(httpContext); // Lấy tổng giá tiền từ giỏ hàng
+                // Thêm đơn đặt hàng vào cơ sở dữ liệu
+                this._context.Add(order);
+                await this._context.SaveChangesAsync();
+
+                // Sau khi lưu đơn hàng, lấy order.Id mới được tạo
+                foreach (var item in cartItems)
+                {
+                    var orderDetail = new OrderDetailEntity
+                    {
+                        Quantity = item.Quantity,
+                        Total = item.Price * item.Quantity,
+                        ProductId = item.ProductId,
+                        OrderId = order.Id
+                    };
+
+                    this._context.Add(orderDetail);
+                    
+                }
+                await this._context.SaveChangesAsync();
+
+
+                // Xóa giỏ hàng sau khi đã thanh toán
+                await ClearCartAsync(httpContext);
+
+                return order;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

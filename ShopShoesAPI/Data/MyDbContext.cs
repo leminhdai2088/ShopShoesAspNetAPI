@@ -67,7 +67,11 @@ namespace ShopShoesAPI.Data
                 .HasOne(o => o.User)
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId);
-              
+
+            modelBuilder.Entity<OrderEntity>()
+                .Property(o => o.Total)
+                .HasColumnType("decimal(18, 2)");
+
 
             base.OnModelCreating(modelBuilder);
 

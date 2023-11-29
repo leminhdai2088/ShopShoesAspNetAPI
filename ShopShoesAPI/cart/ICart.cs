@@ -1,4 +1,6 @@
-﻿namespace ShopShoesAPI.cart
+﻿using ShopShoesAPI.order;
+
+namespace ShopShoesAPI.cart
 {
     public interface ICart
     {
@@ -7,5 +9,6 @@
         public Task<bool> RemoveFromCartAsync(HttpContext httpContext, int productId);
         public Task<bool> ClearCartAsync(HttpContext httpContext);
         public Task<decimal> CalculateTotalAsync(HttpContext httpContext);
+        public Task<OrderEntity> CheckoutAsync(HttpContext httpContext, string userId, OrderDTO orderDTO);
     }
 }
