@@ -27,7 +27,6 @@ namespace ShopShoesAPI.user
                 var products = _context.ProductEntities
                 .Select(p => new ProductDTO
                 {
-                    Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
                     Price = p.Price,
@@ -36,7 +35,6 @@ namespace ShopShoesAPI.user
                     Image = p.Image,
                     Rating = p.Rating,
                     CategoryId = p.CategoryId
-                    // Map other properties if necessary
                 })
                 .ToList();
 
@@ -56,7 +54,6 @@ namespace ShopShoesAPI.user
                     .Where(p => p.Name.Contains(searchString) || p.Description.Contains(searchString))
                     .Select(p => new ProductDTO
                     {
-                        Id = p.Id,
                         Name = p.Name,
                         Description = p.Description,
                         Price = p.Price,
@@ -116,6 +113,34 @@ namespace ShopShoesAPI.user
                 _context.ProductEntities.Remove(product);
                 await _context.SaveChangesAsync();
                 return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<bool> UpdateProduct(int productId, ProductDTO product)
+        {
+            try
+            {
+                var existingProduct = await _context.ProductEntities.FindAsync(productId);
+                if (existingProduct == null)
+                {
+                    return false; // Product not found
+                }
+
+                existingProduct.Name = product.Name;
+                existingProduct.Description = product.Description;
+                existingProduct.Price = product.Price;
+                existingProduct.Quantity = product.Quantity;
+                existingProduct.Discount = product.Discount;
+                existingProduct.Image = product.Image;
+                existingProduct.Rating = product.Rating;
+                existingProduct.CategoryId = product.CategoryId;
+                // Update other properties as needed
+
+                await _context.SaveChangesAsync();
+                return true; // Product updated successfully
             }
             catch (Exception ex)
             {

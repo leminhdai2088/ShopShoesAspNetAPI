@@ -10,6 +10,7 @@ namespace ShopShoesAPI.product
         Task<List<ProductDTO>> SearchProducts(string searchString);
         Task<string> CreateProduct(ProductDTO product);
         Task<bool> DeleteProduct(int productId);
+        Task<bool> UpdateProduct(int productId, ProductDTO product);
     }
 }
 

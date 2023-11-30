@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShopShoesAPI.user;
 using System.Threading.Tasks;
 
 namespace ShopShoesAPI.product
@@ -50,6 +51,25 @@ namespace ShopShoesAPI.product
                 if (result)
                 {
                     return Ok("Product deleted successfully");
+                }
+                return NotFound("Product not found");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("UpdateProduct/{productId}")]
+        public async Task<ActionResult> UpdateProduct(int productId, [FromBody] ProductDTO product)
+        {
+            try
+            {
+                var result = await iProduct.UpdateProduct(productId, product);
+                if (result)
+                {
+                    return Ok("Product updated successfully");
                 }
                 return NotFound("Product not found");
             }
