@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "767a8db7-b97e-4614-8f10-7545e57c5afe",
+                            Id = "2cb88b5c-c877-401b-ac38-ef9db481cabb",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "2f5c57b7-c51b-4535-8c1d-b9703b62f12c",
+                            Id = "d0036f54-05fb-4f73-987a-3718ad17854f",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -334,6 +334,9 @@ namespace ShopShoesAPI.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)

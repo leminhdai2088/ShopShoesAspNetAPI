@@ -1,4 +1,5 @@
 ﻿using ShopShoesAPI.common;
+using ShopShoesAPI.Enums;
 using ShopShoesAPI.user;
 
 namespace ShopShoesAPI.admin
@@ -7,6 +8,11 @@ namespace ShopShoesAPI.admin
     {
         // user
         public Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate); 
-        public Task<string> DeleteUser(string id);
+        public Task<bool> DeleteUser(string id);
+
+        // order
+        public Task<IEnumerable<object>> FindAllOrder(QueryAndPaginateDTO queryAndPaginate, OrderStatusEnum? status);
+
+
     }
 }

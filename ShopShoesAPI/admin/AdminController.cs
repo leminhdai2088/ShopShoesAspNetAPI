@@ -18,13 +18,23 @@ namespace ShopShoesAPI.admin
             this.iAdmin = iAdmin;
         }
 
-        [HttpGet]
+        [HttpGet("users")]
         public async Task<ApiRespone> FindAllUser([FromQuery] QueryAndPaginateDTO queryAndPaginate)
         {
             return new ApiRespone
             {
                 Status = (int)HttpStatusCode.OK,
                 Metadata = await this.iAdmin.FindAllUser(queryAndPaginate)
+            };
+        }
+        [HttpGet("orders")]
+        public async Task<ApiRespone> FinnAllOrder([FromQuery] QueryAndPaginateDTO queryAndPaginate, 
+            [FromQuery] OrderStatusEnum? status)
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = await this.iAdmin.FindAllOrder(queryAndPaginate, status)
             };
         }
 
