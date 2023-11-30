@@ -38,5 +38,16 @@ namespace ShopShoesAPI.admin
             };
         }
 
+        [HttpDelete("user/{userId}")]
+        public async Task<ApiRespone> DeletUserById(string userId)
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Message = "Delete successfully",
+                Metadata = await iAdmin.DeleteUserById(userId)
+            };
+        }
+
     }
 }

@@ -14,8 +14,7 @@ namespace ShopShoesAPI.comment
         {
             this.iComment = iComment;
         }
-        [HttpGet]
-        [Route("Product/{productId}")]
+        [HttpGet("Product/{productId}")]
         public async Task<ActionResult> GetAllCommentsForProduct(int productId)
         {
             try
@@ -44,7 +43,7 @@ namespace ShopShoesAPI.comment
             }
         }
 
-        [HttpPost("/delete")]
+        [HttpPost("delete")]
         public async Task<ActionResult> DeleComment(int productId)
         {
             try
@@ -62,8 +61,7 @@ namespace ShopShoesAPI.comment
             }
         }
 
-        [HttpPut]
-        [Route("UpdateComment/{commentId}")]
+        [HttpPut("UpdateComment/{commentId}")]
         public async Task<ActionResult> EditComment(int commentId, [FromBody] CommentDTO comment)
         {
             try

@@ -16,7 +16,7 @@ namespace ShopShoesAPI.admin
             this.context = context;
         }
 
-        public async Task<bool> DeleteUser(string id)
+        public async Task<bool> DeleteUserById(string id)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace ShopShoesAPI.admin
                 {
                     throw new Exception("Cannot delete this user");
                 }
-                user.Deleted= true;
+                user.Deleted = true;
                 await this.context.SaveChangesAsync();
                 return true;
             }

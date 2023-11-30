@@ -8,7 +8,7 @@ namespace ShopShoesAPI.admin
     {
         // user
         public Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate); 
-        public Task<bool> DeleteUser(string id);
+        public Task<bool> DeleteUserById(string id);
 
         // order
         public Task<IEnumerable<object>> FindAllOrder(QueryAndPaginateDTO queryAndPaginate, OrderStatusEnum? status);
