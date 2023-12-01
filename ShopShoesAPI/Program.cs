@@ -17,6 +17,7 @@ using NRedisStack;
 using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 using ShopShoesAPI.cart;
+using ShopShoesAPI.order;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,7 +56,9 @@ builder.Services.AddScoped<IEmail, EmailService>();
 builder.Services.AddScoped<IAdmin, AdminService>();
 builder.Services.AddScoped<ICart, CartService>();
 builder.Services.AddScoped<IProduct, ProductService>();
+builder.Services.AddScoped<IOrder, OrderService>();
 
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 

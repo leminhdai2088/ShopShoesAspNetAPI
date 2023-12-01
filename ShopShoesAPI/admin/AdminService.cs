@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShopShoesAPI.common;
 using ShopShoesAPI.Data;
+using ShopShoesAPI.enums;
 using ShopShoesAPI.Enums;
 using ShopShoesAPI.user;
 
@@ -41,7 +42,7 @@ namespace ShopShoesAPI.admin
             }
         }
 
-        public async Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate)
+        public async Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate, StatusUserEnum? statusUserEnum = StatusUserEnum.All)
         {
             try
             {
@@ -55,6 +56,15 @@ namespace ShopShoesAPI.admin
                         x.UserName.Contains(queryAndPaginate.searchString)
                     ));
                 }
+
+                if(statusUserEnum == StatusUserEnum.Active)
+                {
+                    query = query.Where(u => u.Deleted == false);
+                }else if(statusUserEnum == StatusUserEnum.Deleted)
+                {
+                    query = query.Where(u => u.Deleted == true);
+                }
+
                 var users = await query
                     .OrderBy(u => u.Email)
                     .Skip((queryAndPaginate.pageIndex - 1) * queryAndPaginate.pageSize)

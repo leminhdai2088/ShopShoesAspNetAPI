@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ShopShoesAPI.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
 namespace ShopShoesAPI.order
@@ -13,5 +14,9 @@ namespace ShopShoesAPI.order
 
         [StringLength(100), AllowNull]
         public string Note { get; set; }
+
+        [Required]
+        public PayMethod payMethod { get; set; } = PayMethod.Cash;
+
     }
 }
