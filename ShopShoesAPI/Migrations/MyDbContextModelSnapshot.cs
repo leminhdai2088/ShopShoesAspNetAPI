@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4e73109c-64c0-47bd-9deb-1ec2ffe1df6f",
+                            Id = "2cb88b5c-c877-401b-ac38-ef9db481cabb",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "28923f3a-36ff-4dcb-b5e9-8d2034bc80c1",
+                            Id = "d0036f54-05fb-4f73-987a-3718ad17854f",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -525,6 +525,33 @@ namespace ShopShoesAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Category 1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Category 2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Category 3"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Category 4"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Category 5"
+                        });
                 });
 
             modelBuilder.Entity("ShopShoesAPI.product.ProductEntity", b =>
