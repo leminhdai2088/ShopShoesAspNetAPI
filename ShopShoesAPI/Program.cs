@@ -18,6 +18,7 @@ using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 using ShopShoesAPI.cart;
 using ShopShoesAPI.order;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -129,6 +130,10 @@ builder.Services.AddSwaggerGen(c =>
             new string[] { }
         }
     });
+
+    var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";  
+    var path = Path.Combine(AppContext.BaseDirectory, xmlFileName);
+    c.IncludeXmlComments(path);
 });
 
 // Configure session state

@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- <Company>Evilcorp</Company> -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +26,14 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NRedisStack" Version="0.10.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	  
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\Payment.Application\Payment.Application.csproj" />
+    <ProjectReference Include="..\core\Payment.Domain\Payment.Domain.csproj" />
+    <ProjectReference Include="..\infras\Payment.Persistence\Payment.Persistence.csproj" />
+    <ProjectReference Include="..\shared\Payment.Ultils\Payment.Ultils.csproj" />
   </ItemGroup>
 
 </Project>
