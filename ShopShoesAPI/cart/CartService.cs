@@ -3,6 +3,7 @@ using ShopShoesAPI.Data;
 using ShopShoesAPI.order;
 using ShopShoesAPI.user;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ShopShoesAPI.cart
 {
@@ -23,7 +24,13 @@ namespace ShopShoesAPI.cart
             try
             {
                 var cart = this.httpContextAccessor?.HttpContext?.Session.GetString("Cart");
-                var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart) : null;
+                var options = new JsonSerializerOptions
+                {
+                    // Các tùy chọn
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    
+                };
+                var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart, options) : null;
                 return cartItems;
             }catch(Exception ex)
             {

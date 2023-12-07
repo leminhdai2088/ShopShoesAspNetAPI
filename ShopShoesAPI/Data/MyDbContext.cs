@@ -76,6 +76,7 @@ namespace ShopShoesAPI.Data
             base.OnModelCreating(modelBuilder);
 
             SeedRoles(modelBuilder);
+            SeedCategories(modelBuilder);
         }
 
         private static void SeedRoles(ModelBuilder modelBuilder)
@@ -83,6 +84,17 @@ namespace ShopShoesAPI.Data
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin"},
                 new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "User" }
+                );
+        }
+
+        private static void SeedCategories(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CategoryEntity>().HasData(
+                new CategoryEntity() { Id  = 1, Name = "Category 1" },
+                new CategoryEntity() { Id = 2, Name = "Category 2" },
+                new CategoryEntity() { Id = 3, Name = "Category 3" },
+                new CategoryEntity() { Id = 4, Name = "Category 4" },
+                new CategoryEntity() { Id = 5, Name = "Category 5" }
                 );
         }
 

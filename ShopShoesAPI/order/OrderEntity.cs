@@ -15,7 +15,7 @@ namespace ShopShoesAPI.order
         public string Address { get; set; }
         [Required]
         public OrderStatusEnum Status { get; set; } = OrderStatusEnum.Pending;
-        public string Note { get; set; } = null!;
+        public string Note { get; set; } = String.Empty;
         public PayMethod PayMethod { get; set; } = PayMethod.Cash;
         [Required, Phone]
         public string Phone { get; set; }
