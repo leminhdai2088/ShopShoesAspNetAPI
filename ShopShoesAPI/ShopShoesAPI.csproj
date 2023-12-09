@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -7,6 +7,7 @@
     <!-- <Company>Evilcorp</Company> -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>\bin\ShopShoesAPI.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,10 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\core\Payment.Application\Payment.Application.csproj" />
     <ProjectReference Include="..\core\Payment.Domain\Payment.Domain.csproj" />
-    <ProjectReference Include="..\infras\Payment.Persistence\Payment.Persistence.csproj" />
-    <ProjectReference Include="..\shared\Payment.Ultils\Payment.Ultils.csproj" />
   </ItemGroup>
 
 </Project>

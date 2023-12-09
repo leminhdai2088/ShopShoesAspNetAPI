@@ -19,6 +19,13 @@ using StackExchange.Redis;
 using ShopShoesAPI.cart;
 using ShopShoesAPI.order;
 using System.Reflection;
+using Payment.Application.Services.Merchant;
+using Payment.Application.Services.PaymentDestination;
+using Payment.Application.Services.PaymentNotification;
+using Payment.Application.Services.PaymentSignature;
+using Payment.Application.Services.PaymentTransaction;
+using ShopShoesAPI.CheckoutServices.Payment;
+using Payment.Application.Services.Payment;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +65,15 @@ builder.Services.AddScoped<IAdmin, AdminService>();
 builder.Services.AddScoped<ICart, CartService>();
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IOrder, OrderService>();
+
+builder.Services.AddScoped<IMerchant, MerchantService>();
+builder.Services.AddScoped<IPaymentDes, PaymentDesService>();
+builder.Services.AddScoped<IPaymentNoti, PaymentNotiService>();
+builder.Services.AddScoped<IPaymentSig, PaymentSigService>();
+builder.Services.AddScoped<IPaymentTrans, PaymentTransService>();
+builder.Services.AddScoped<IPayment, PaymentService>();
+
+
 
 builder.Services.AddHttpContextAccessor();
 

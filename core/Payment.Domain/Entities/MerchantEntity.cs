@@ -19,7 +19,7 @@ namespace Payment.Domain.Entities
         public string? MerchantIpnUrl { get; set; } = string.Empty;
         public string? MerchantReturnUrl { get; set; } = string.Empty;
         public string? SecretKey { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public List<PaymentNotificationEntity>? PaymentNotificationEntities { get; set; }
         public List<PaymentEntity>? PaymentEntities { get; set; }

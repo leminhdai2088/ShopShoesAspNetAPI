@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payment.Domain.Entities
+namespace Payment.Application.Services.PaymentDestination
 {
-    [Table("PaymentNotification")]
-    public class PaymentNotificationEntity
+    public class PaymentNotiDto
     {
-        [Key]
-        public string Id { get; set; }
         public DateTime? NotiDate { get; set; } = DateTime.Now;
         public string? NotiContent { get; set; } = string.Empty;
         public decimal? NotiAmount { get; set; }
@@ -25,11 +20,6 @@ namespace Payment.Domain.Entities
         public string? PaymentRefId { get; set; } = string.Empty;
 
         public string? NotiPaymentId { get; set; } = string.Empty; //fk
-        public PaymentEntity? PaymentEntity { get; set; }
-
         public string? NotiMerchantId { get; set; } = string.Empty; //fk
-        public MerchantEntity? MerchantEntity { get; set; }
-
-
     }
 }
