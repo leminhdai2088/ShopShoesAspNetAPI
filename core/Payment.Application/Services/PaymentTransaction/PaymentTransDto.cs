@@ -15,6 +15,6 @@ namespace Payment.Application.Services.PaymentTransaction
         public DateTime? TransDate { get; set; }
         public string? TransRefId { get; set; } = string.Empty;
 
-        public string? PaymentId { get; set; } = string.Empty; //fk
+        public int? PaymentId { get; set; } //fk
     }
 }

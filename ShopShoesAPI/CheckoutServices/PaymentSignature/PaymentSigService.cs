@@ -1,14 +1,7 @@
-﻿using NetTopologySuite.Operation.Valid;
-using Payment.Application.Services.PaymentDestination;
-using Payment.Domain.Entities;
+﻿using Payment.Domain.Entities;
 using ShopShoesAPI.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Payment.Application.Services.PaymentSignature
+namespace ShopShoesAPI.CheckoutServices
 {
     public class PaymentSigService : IPaymentSig
     {

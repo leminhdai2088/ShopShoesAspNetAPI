@@ -12,7 +12,7 @@ namespace Payment.Domain.Entities
     public class PaymentTransactionEntity
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string? TransMessage { get; set; } = string.Empty;
         public string? TransPayload { get; set; } = string.Empty;
         public string? TransStatus { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ namespace Payment.Domain.Entities
         public DateTime? TransDate { get; set; }
         public string? TransRefId { get; set; } = string.Empty;
 
-        public string? PaymentId { get; set; } = string.Empty; //fk
+        public int? PaymentId { get; set; } //fk
         public PaymentEntity? PaymentEntity { get; set; }
     }
 }

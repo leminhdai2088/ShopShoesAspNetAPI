@@ -1,9 +1,8 @@
-﻿using Payment.Application.Services.Payment;
-
-namespace ShopShoesAPI.CheckoutServices.Payment
+﻿
+namespace ShopShoesAPI.CheckoutServices
 {
     public interface IPayment
     {
-        public Task<string> Create(CreatePaymentDto paymentDto);
+        public Task<ResultPaymentLinksDto> Create(CreatePaymentDto paymentDto);
     }
 }

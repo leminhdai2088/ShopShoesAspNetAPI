@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payment.Application.Services.Merchant
+namespace ShopShoesAPI.CheckoutServices
 {
     public class MerchantService : IMerchant
     {
@@ -38,7 +38,7 @@ namespace Payment.Application.Services.Merchant
             }
         }
 
-        public async Task<GetMerchantDto> FindById(string id)
+        public async Task<GetMerchantDto> FindById(int id)
         {
             try
             {

@@ -38,7 +38,7 @@ namespace Payment.Application.Services.Merchant
             }
         }
 
-        public async Task<GetMerchantDto> FindById(string id)
+        public async Task<GetMerchantDto> FindById(int id)
         {
             try
             {

@@ -1,13 +1,7 @@
-﻿using Payment.Application.Services.PaymentDestination;
-using Payment.Domain.Entities;
+﻿using Payment.Domain.Entities;
 using ShopShoesAPI.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Payment.Application.Services.PaymentNotification
+namespace ShopShoesAPI.CheckoutServices
 {
     public class PaymentNotiService: IPaymentNoti
     {

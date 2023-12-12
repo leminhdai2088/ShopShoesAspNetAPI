@@ -13,7 +13,7 @@ namespace Payment.Domain.Entities
     public class MerchantEntity : BaseAuditableEntity
     {
         [Key]
-        public string Id { get; set; } = string.Empty;
+        public int Id { get; set; }
         public string? MerchantName { get; set; } = string.Empty;
         public string? MerchantWeblink { get; set; } = string.Empty;
         public string? MerchantIpnUrl { get; set; } = string.Empty;

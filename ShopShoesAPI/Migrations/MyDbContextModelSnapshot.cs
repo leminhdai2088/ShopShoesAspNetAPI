@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2cb88b5c-c877-401b-ac38-ef9db481cabb",
+                            Id = "10520969-a065-4156-886c-433b3785cee2",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "d0036f54-05fb-4f73-987a-3718ad17854f",
+                            Id = "7c494db8-3056-429b-a2ba-22fb30252ce4",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -173,8 +173,11 @@ namespace ShopShoesAPI.Migrations
 
             modelBuilder.Entity("Payment.Domain.Entities.MerchantEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -213,8 +216,11 @@ namespace ShopShoesAPI.Migrations
 
             modelBuilder.Entity("Payment.Domain.Entities.PaymentDestinationEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -228,8 +234,8 @@ namespace ShopShoesAPI.Migrations
                     b.Property<string>("DesName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DesParentId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("DesParentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("DesShortName")
                         .HasColumnType("nvarchar(max)");
@@ -243,8 +249,8 @@ namespace ShopShoesAPI.Migrations
                     b.Property<string>("LastUpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PaymentDestinationEntitiesId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PaymentDestinationEntitiesId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ShortIndex")
                         .HasColumnType("int");
@@ -258,15 +264,17 @@ namespace ShopShoesAPI.Migrations
 
             modelBuilder.Entity("Payment.Domain.Entities.PaymentEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("ExpireDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MerchantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MerchantId")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("PaidAmount")
                         .HasColumnType("decimal(18,2)");
@@ -280,9 +288,8 @@ namespace ShopShoesAPI.Migrations
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PaymentDesId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("PaymentDesId")
+                        .HasColumnType("int");
 
                     b.Property<string>("PaymentLanguage")
                         .HasColumnType("nvarchar(max)");
@@ -312,8 +319,11 @@ namespace ShopShoesAPI.Migrations
 
             modelBuilder.Entity("Payment.Domain.Entities.PaymentNotificationEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("NotiAmount")
                         .HasColumnType("decimal(18,2)");
@@ -324,14 +334,14 @@ namespace ShopShoesAPI.Migrations
                     b.Property<DateTime?>("NotiDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NotiMerchantId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("NotiMerchantId")
+                        .HasColumnType("int");
 
                     b.Property<string>("NotiMessage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NotiPaymentId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("NotiPaymentId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("NotiResDate")
                         .HasColumnType("datetime2");
@@ -362,14 +372,17 @@ namespace ShopShoesAPI.Migrations
 
             modelBuilder.Entity("Payment.Domain.Entities.PaymentSignatureEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Isvalid")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PaymentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("SignAlgo")
                         .HasColumnType("nvarchar(max)");
@@ -392,11 +405,14 @@ namespace ShopShoesAPI.Migrations
 
             modelBuilder.Entity("Payment.Domain.Entities.PaymentTransactionEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("PaymentId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("TransAmount")
                         .HasColumnType("datetime2");

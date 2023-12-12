@@ -10,7 +10,7 @@ namespace Payment.Application.Services.Merchant
     public interface IMerchant
     {
         public Task<List<GetMerchantDto>> FindAll();
-        public Task<GetMerchantDto> FindById(string id);
+        public Task<GetMerchantDto> FindById(int id);
         public Task<string> Create(CreateMerchantDto merchant);
     }
 }

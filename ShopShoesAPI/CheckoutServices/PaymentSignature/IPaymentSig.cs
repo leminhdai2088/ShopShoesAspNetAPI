@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payment.Application.Services.PaymentSignature
+namespace ShopShoesAPI.CheckoutServices
 {
     public interface IPaymentSig
     {

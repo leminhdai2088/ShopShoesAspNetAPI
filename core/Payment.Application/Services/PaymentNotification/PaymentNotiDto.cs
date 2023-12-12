@@ -19,7 +19,7 @@ namespace Payment.Application.Services.PaymentDestination
         public string? NotiResHttpCode { get; set; } = string.Empty;
         public string? PaymentRefId { get; set; } = string.Empty;
 
-        public string? NotiPaymentId { get; set; } = string.Empty; //fk
-        public string? NotiMerchantId { get; set; } = string.Empty; //fk
+        public int? NotiPaymentId { get; set; }  //fk
+        public int? NotiMerchantId { get; set; }  //fk
     }
 }

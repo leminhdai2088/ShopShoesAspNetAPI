@@ -12,7 +12,7 @@ namespace Payment.Domain.Entities
     public class PaymentNotificationEntity
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
         public DateTime? NotiDate { get; set; } = DateTime.Now;
         public string? NotiContent { get; set; } = string.Empty;
         public decimal? NotiAmount { get; set; }
@@ -24,10 +24,10 @@ namespace Payment.Domain.Entities
         public string? NotiResHttpCode { get; set; } = string.Empty;
         public string? PaymentRefId { get; set; } = string.Empty;
 
-        public string? NotiPaymentId { get; set; } = string.Empty; //fk
+        public int? NotiPaymentId { get; set; } //fk
         public PaymentEntity? PaymentEntity { get; set; }
 
-        public string? NotiMerchantId { get; set; } = string.Empty; //fk
+        public int? NotiMerchantId { get; set; } //fk
         public MerchantEntity? MerchantEntity { get; set; }
 
 

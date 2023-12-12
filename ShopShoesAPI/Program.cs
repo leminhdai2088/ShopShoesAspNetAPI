@@ -19,13 +19,8 @@ using StackExchange.Redis;
 using ShopShoesAPI.cart;
 using ShopShoesAPI.order;
 using System.Reflection;
-using Payment.Application.Services.Merchant;
-using Payment.Application.Services.PaymentDestination;
-using Payment.Application.Services.PaymentNotification;
-using Payment.Application.Services.PaymentSignature;
-using Payment.Application.Services.PaymentTransaction;
-using ShopShoesAPI.CheckoutServices.Payment;
-using Payment.Application.Services.Payment;
+using PaymentService.Vnpay.Config;
+using ShopShoesAPI.CheckoutServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,13 +66,15 @@ builder.Services.AddScoped<IPaymentDes, PaymentDesService>();
 builder.Services.AddScoped<IPaymentNoti, PaymentNotiService>();
 builder.Services.AddScoped<IPaymentSig, PaymentSigService>();
 builder.Services.AddScoped<IPaymentTrans, PaymentTransService>();
-builder.Services.AddScoped<IPayment, PaymentService>();
+builder.Services.AddScoped<IPayment, PaymentServices>();
 
 
 
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<VnpayConfig>(
+                builder.Configuration.GetSection(VnpayConfig.ConfigName));
 
 // redis
 var redisUri = builder.Configuration["AppSettings:RedisURI"];

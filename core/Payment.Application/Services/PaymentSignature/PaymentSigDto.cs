@@ -14,6 +14,6 @@ namespace Payment.Application.Services.PaymentSignature
         public DateTime SignDate { get; set; }
         public bool Isvalid { get; set; }
 
-        public string? PaymentId { get; set; } = string.Empty; //fk
+        public int? PaymentId { get; set; } //fk
     }
 }

@@ -13,14 +13,14 @@ namespace Payment.Domain.Entities
     public class PaymentDestinationEntity: BaseAuditableEntity
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string? DesName { get; set; } = string.Empty;
         public string? DesShortName { get; set; } = string.Empty;
         public string? DesLogo { get; set; } = string.Empty;
         public int ShortIndex { get; set; }
         public bool IsActive { get; set; }
 
-        public string? DesParentId { get; set; } = string.Empty; //fk
+        public int? DesParentId { get; set; } //fk
         public PaymentDestinationEntity? PaymentDestinationEntities { get; set; }
 
         public List<PaymentEntity>? PaymentEntities { get; set; }

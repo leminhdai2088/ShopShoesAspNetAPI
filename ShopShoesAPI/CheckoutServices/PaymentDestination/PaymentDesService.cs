@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payment.Application.Services.PaymentDestination
+namespace ShopShoesAPI.CheckoutServices
 {
     public class PaymentDesService : IPaymentDes
     {

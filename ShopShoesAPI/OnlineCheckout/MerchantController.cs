@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Payment.Application.Services.Merchant;
+﻿using Microsoft.AspNetCore.Mvc;
+using ShopShoesAPI.CheckoutServices;
 using ShopShoesAPI.common;
 using System.Net;
 
@@ -17,7 +16,7 @@ namespace ShopShoesAPI.OnlineCheckout
         }
 
         [HttpGet("{id}")]
-        public async Task<ApiRespone> FindById(string id)
+        public async Task<ApiRespone> FindById(int id)
         {
             return new ApiRespone
             {
