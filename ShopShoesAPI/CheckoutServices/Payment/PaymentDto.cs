@@ -24,4 +24,21 @@ namespace ShopShoesAPI.CheckoutServices
         public int? PaymentId { get; set; }
         public string? PaymentUrl { get; set; } = string.Empty;
     }
+
+    public class PaymentReturnDto
+    {
+        public int? PaymentId { get; set; }
+        public string? PaymentStatus { get; set; } = string.Empty;
+        public string? PaymentMessage { get; set; } = string.Empty;
+
+
+        /// <summary>
+        /// Format: yyyMMddHHmmss
+        /// </summary>
+        public string? PaymentDate { get; set; } = string.Empty;
+        public string? PaymentRefId { get; set; } = string.Empty;
+        public decimal? Amount { get; set; }
+        public string? Signature { get; set; } = string.Empty;
+
+    }
 }

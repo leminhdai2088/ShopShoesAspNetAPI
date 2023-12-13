@@ -11,7 +11,7 @@ namespace ShopShoesAPI.CheckoutServices
         public string? TransMessage { get; set; } = string.Empty;
         public string? TransPayload { get; set; } = string.Empty;
         public string? TransStatus { get; set; } = string.Empty;
-        public DateTime? TransAmount { get; set; }
+        public decimal? TransAmount { get; set; }
         public DateTime? TransDate { get; set; }
         public string? TransRefId { get; set; } = string.Empty;
 
