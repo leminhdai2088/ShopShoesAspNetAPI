@@ -21,6 +21,7 @@ using ShopShoesAPI.order;
 using System.Reflection;
 using PaymentService.Vnpay.Config;
 using ShopShoesAPI.CheckoutServices;
+using ShopShoesAPI.CheckoutServices.Momo.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,11 +76,16 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.Configure<VnpayConfig>(
                 builder.Configuration.GetSection(VnpayConfig.ConfigName));
+builder.Services.Configure<MomoConfig>(
+                builder.Configuration.GetSection(MomoConfig.ConfigName));
 
 // redis
 var redisUri = builder.Configuration["AppSettings:RedisURI"];
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
     ConnectionMultiplexer.Connect(redisUri)
+);
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+    ConnectionMultiplexer.Connect("127.0.0.1:6379")
 );
 
 

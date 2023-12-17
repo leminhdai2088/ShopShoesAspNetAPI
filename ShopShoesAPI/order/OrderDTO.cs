@@ -18,5 +18,8 @@ namespace ShopShoesAPI.order
         [Required]
         public PayMethod payMethod { get; set; } = PayMethod.Cash;
 
+        public OrderStatusEnum? status { get; set; } = OrderStatusEnum.Pending;
+
+
     }
 }

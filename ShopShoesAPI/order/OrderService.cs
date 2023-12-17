@@ -21,6 +21,7 @@ namespace ShopShoesAPI.order
 
         public async Task<OrderEntity> CheckoutAsync(string userId, OrderDTO orderDTO)
         {
+
             try
             {
                 var cartItems = this.iCart.GetCartItems();
@@ -69,7 +70,6 @@ namespace ShopShoesAPI.order
 
                 // Xóa giỏ hàng sau khi đã thanh toán
                 this.iCart.ClearCart();
-
                 return order;
             }
             catch (Exception ex)

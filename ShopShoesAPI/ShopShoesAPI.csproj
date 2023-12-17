@@ -35,4 +35,8 @@
     <ProjectReference Include="..\infras\PaymentService\PaymentService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CheckoutServices\Momo\Lib\" />
+  </ItemGroup>
+
 </Project>

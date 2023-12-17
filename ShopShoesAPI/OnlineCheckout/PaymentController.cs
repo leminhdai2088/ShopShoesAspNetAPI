@@ -5,6 +5,7 @@ using Payment.Ultils.Extentions;
 using PaymentService.Vnpay.Config;
 using PaymentService.Vnpay.Response;
 using ShopShoesAPI.CheckoutServices;
+using ShopShoesAPI.CheckoutServices.Momo.Request;
 using ShopShoesAPI.common;
 using System.Net;
 
@@ -61,5 +62,23 @@ namespace ShopShoesAPI.OnlineCheckout
                 returnUrl = returnUrl.Remove(returnUrl.Length - 1, 1);   
             return Redirect($"{returnUrl}?{reuturnModel.ToQueryString()}");
         }
+
+        [HttpGet("momo-return")]
+        public async Task<IActionResult> ProcessMomoPaymentReturn([FromQuery] MomoOneTimePaymentResultRequest response)
+        {
+            string returnUrl = string.Empty;
+            var reuturnModel = new PaymentReturnDto();
+            var processResult = await this.payment.ProcessMomoPaymentReturn(response);
+
+            if (!processResult.Item2.IsNullOrEmpty())
+            {
+                reuturnModel = processResult.Item1;
+                returnUrl = processResult.Item2;
+            }
+            if (returnUrl.EndsWith("/"))
+                returnUrl = returnUrl.Remove(returnUrl.Length - 1, 1);
+            return Redirect($"{returnUrl}?{reuturnModel.ToQueryString()}");
+        }
+
     }
 }

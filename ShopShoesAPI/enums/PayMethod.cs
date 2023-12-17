@@ -4,7 +4,7 @@
     {
         Cash,
         VNPay,
-        Momo,
+        Momo = 3,
         ZaloPay
     }
 }
