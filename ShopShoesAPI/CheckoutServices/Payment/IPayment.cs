@@ -8,9 +8,9 @@ namespace ShopShoesAPI.CheckoutServices
 {
     public interface IPayment
     {
-        public Task<object> Create(CreatePaymentDto paymentDto);
+        public Task<object> Create(string userId, CreatePaymentDto paymentDto);
         public Task<PaymentEntity> FindById(int id);
-        public Task<(PaymentReturnDto, string)> ProcessVnpayPaymentReturn(VnpayResponse request);
+        public Task<(PaymentReturnDto, string)> ProcessVnpayPaymentReturn(string userId, VnpayResponse request);
         public Task<VnpayPayIpnResponse> ProcessVnpayPaymentIpn(VnpayResponse request);
         public Task<(PaymentReturnDto, string)> ProcessMomoPaymentReturn(MomoOneTimePaymentResultRequest request);
 

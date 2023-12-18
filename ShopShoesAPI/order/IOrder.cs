@@ -4,6 +4,6 @@ namespace ShopShoesAPI.order
 {
     public interface IOrder
     {
-        public Task<OrderEntity> CheckoutAsync(string userId, OrderDTO orderDTO);
+        public Task<bool> CheckoutAsync(string userId, OrderDTO orderDTO, string? paymentId);
     }
 }

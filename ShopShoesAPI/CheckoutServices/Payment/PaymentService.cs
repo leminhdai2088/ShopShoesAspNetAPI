@@ -52,7 +52,7 @@ namespace ShopShoesAPI.CheckoutServices
             this.cart = cart;
             this.order = order;
         }   
-        public async Task<object> Create(CreatePaymentDto paymentDto)
+        public async Task<object> Create(string userId, CreatePaymentDto paymentDto)
         {
             decimal RequiredAmount = this.cart.CalculateTotal();
             var transaction = this.context.Database;
@@ -64,7 +64,7 @@ namespace ShopShoesAPI.CheckoutServices
 
             try
             {
-                transaction.BeginTransaction();
+                await transaction.BeginTransactionAsync();
 
                 if (paymentDto.payMethod == PayMethod.Cash || paymentDto.PaymentDesId == 0)
                 {
@@ -75,7 +75,9 @@ namespace ShopShoesAPI.CheckoutServices
                         Note = paymentDto.Note,
                         payMethod = paymentDto.payMethod
                     };
-                    var result = await this.order.CheckoutAsync("387f18ca-431a-4c1e-903f-5787da723121", orderDTO);
+                    var result = await this.order.CheckoutAsync(userId, orderDTO, null);
+                    await transaction.CommitTransactionAsync();
+                    await transaction.CloseConnectionAsync();
                     return result;
                 }
 
@@ -103,7 +105,9 @@ namespace ShopShoesAPI.CheckoutServices
                 };
                 await this.context.AddAsync(paymentSig);
                 await this.context.SaveChangesAsync();
-                transaction.CommitTransaction();
+                await transaction.CommitTransactionAsync();
+                await transaction.CloseConnectionAsync();
+
                 var desEntity = await this.context.PaymentDesEntities
                     .FirstOrDefaultAsync(e => e.Id == paymentDto.PaymentDesId);
                     
@@ -164,7 +168,7 @@ namespace ShopShoesAPI.CheckoutServices
             }
         }
 
-        public async Task<(PaymentReturnDto, string)> ProcessVnpayPaymentReturn(VnpayResponse request)
+        public async Task<(PaymentReturnDto, string)> ProcessVnpayPaymentReturn(string userId, VnpayResponse request)
         {
             try
             {
@@ -201,7 +205,7 @@ namespace ShopShoesAPI.CheckoutServices
                                 payMethod = SpayMethod,
                                 status = OrderStatusEnum.Completed
                             };
-                            var savedOrder = await this.order.CheckoutAsync("387f18ca-431a-4c1e-903f-5787da723121", orderDTO);
+                            var savedOrder = await this.order.CheckoutAsync(userId, orderDTO, payment.Id.ToString());
                         }
                         else
                         {

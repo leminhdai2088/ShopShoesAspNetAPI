@@ -3,6 +3,7 @@ using ShopShoesAPI.Enums;
 using ShopShoesAPI.user;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ShopShoesAPI.order
 {
@@ -21,6 +22,10 @@ namespace ShopShoesAPI.order
         public string Phone { get; set; }
 
         public string UserId { get; set; }
+
+        [AllowNull]
+        public string? PaymentId { get; set; } = string.Empty;
+
 
         [Required]
         public decimal Total { get; set; }

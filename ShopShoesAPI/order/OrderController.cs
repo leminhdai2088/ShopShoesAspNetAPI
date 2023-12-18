@@ -34,7 +34,7 @@ namespace ShopShoesAPI.order
             {
                 Status = (int)HttpStatusCode.Created,
                 Message = "Checkout successfully",
-                Metadata = await this.iOrder.CheckoutAsync(userId, orderDTO)
+                Metadata = await this.iOrder.CheckoutAsync(userId, orderDTO, null)
             };
         }
     }

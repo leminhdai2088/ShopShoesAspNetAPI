@@ -1,27 +1,39 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Payment.Ultils.Extentions;
 using PaymentService.Vnpay.Config;
 using PaymentService.Vnpay.Response;
+using ShopShoesAPI.auth;
 using ShopShoesAPI.CheckoutServices;
 using ShopShoesAPI.CheckoutServices.Momo.Request;
 using ShopShoesAPI.common;
+using ShopShoesAPI.Enums;
+using ShopShoesAPI.user;
 using System.Net;
 
 namespace ShopShoesAPI.OnlineCheckout
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = Roles.User)]
     public class PaymentController : ControllerBase
     {
         private readonly IPayment payment;
         private readonly VnpayConfig vnpayConfig;
-
-        public PaymentController(IPayment payment, IOptions<VnpayConfig> vnpayConfigOption)
+        private readonly string userId;
+        private readonly IAuth auth;
+        private readonly PayloadTokenDTO payloadTokenDTO;
+        public PaymentController(IPayment payment, IOptions<VnpayConfig> vnpayConfigOption,
+            IHttpContextAccessor httpContextAccessor, IAuth iAuth)
         {
+            var authorizationHeader = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
             this.payment = payment;
             this.vnpayConfig = vnpayConfigOption.Value;
+            this.auth = iAuth;
+            payloadTokenDTO = this.auth.VerifyAccessToken(authorizationHeader!);
+            userId = payloadTokenDTO?.Id ?? string.Empty;
         }
 
         [HttpPost]
@@ -31,7 +43,7 @@ namespace ShopShoesAPI.OnlineCheckout
             {
                 Status = (int)HttpStatusCode.Created,
                 Message = "Create payment successfully",
-                Metadata = await this.payment.Create(paymentDto)
+                Metadata = await this.payment.Create(userId, paymentDto)
             };
         }
 
@@ -51,7 +63,7 @@ namespace ShopShoesAPI.OnlineCheckout
         {
             string returnUrl = string.Empty;
             var reuturnModel = new PaymentReturnDto();
-            var processResult = await this.payment.ProcessVnpayPaymentReturn(response);
+            var processResult = await this.payment.ProcessVnpayPaymentReturn(userId, response);
 
             if(!processResult.Item2.IsNullOrEmpty())
             {

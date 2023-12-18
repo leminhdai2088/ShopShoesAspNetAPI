@@ -19,7 +19,7 @@ namespace ShopShoesAPI.order
     
         }
 
-        public async Task<OrderEntity> CheckoutAsync(string userId, OrderDTO orderDTO)
+        public async Task<bool> CheckoutAsync(string userId, OrderDTO orderDTO, string? paymentId = null)
         {
 
             try
@@ -40,12 +40,14 @@ namespace ShopShoesAPI.order
                 var order = new OrderEntity
                 {
                     UserId = userId,
-                    Phone = orderDTO.Phone ?? user.PhoneNumber,
-                    Address = orderDTO.Address ?? user.Address,
-                    Note = orderDTO.Note ?? "",
-                    PayMethod = orderDTO.payMethod
+                    Phone = orderDTO.Phone ?? user.PhoneNumber ?? string.Empty,
+                    Address = orderDTO.Address ?? user.Address ?? string.Empty,
+                    Note = orderDTO.Note ?? string.Empty,
+                    PayMethod = orderDTO.payMethod,
+                    Total = this.iCart.CalculateTotal(),
+                    PaymentId = paymentId,
                 };
-                order.Total = this.iCart.CalculateTotal(); // Lấy tổng giá tiền từ giỏ hàng
+                 // Lấy tổng giá tiền từ giỏ hàng
                 // Thêm đơn đặt hàng vào cơ sở dữ liệu
                 await this.context.AddAsync(order);
               
@@ -63,14 +65,11 @@ namespace ShopShoesAPI.order
                     };
 
                     await this.context.AddAsync(orderDetail);
-
                 }
                 await this.context.SaveChangesAsync();
-
-
                 // Xóa giỏ hàng sau khi đã thanh toán
                 this.iCart.ClearCart();
-                return order;
+                return true;
             }
             catch (Exception ex)
             {
