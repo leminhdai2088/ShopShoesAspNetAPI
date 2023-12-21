@@ -14,6 +14,12 @@ namespace ShopShoesAPI.admin
         // order
         public Task<IEnumerable<object>> FindAllOrder(QueryAndPaginateDTO queryAndPaginate, OrderStatusEnum? status);
 
+        // dashboard
+        public Task<decimal> CalculateTotalSale();
+        public Task<int> CalculateTotalOrder();
+        public Task<int> CalculateTotalProduct();
+        public Task<object[]> CalculateTotalNewOrder();
+
 
     }
 }

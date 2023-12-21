@@ -149,5 +149,65 @@ namespace ShopShoesAPI.admin
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<decimal> CalculateTotalSale()
+        {
+            try
+            {
+                decimal total = 0;
+                var orders = await this.context.OrderEntities.ToListAsync();
+                foreach( var order in orders)
+                {
+                    total += order.Total;
+                }
+                return total;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> CalculateTotalOrder()
+        {
+            try
+            {
+                decimal total = 0;
+                var orders = await this.context.OrderEntities.CountAsync();
+                return orders;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> CalculateTotalProduct()
+        {
+            try
+            {
+                decimal total = 0;
+                var products = await this.context.ProductEntities.CountAsync();
+                return products;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<object[]> CalculateTotalNewOrder()
+        {
+            try
+            {
+                var orders = await this.context.OrderEntities
+                    .OrderByDescending(e => e.createdAt)
+                    .Take(5)
+                    .ToArrayAsync();
+                return orders;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

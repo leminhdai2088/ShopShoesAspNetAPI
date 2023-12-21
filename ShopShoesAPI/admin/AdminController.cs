@@ -66,5 +66,45 @@ namespace ShopShoesAPI.admin
             };
         }
 
+        [HttpGet("total-sale")]
+        public async Task<ApiRespone> TotalSale()
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = await this.iAdmin.CalculateTotalSale()
+            };
+        }
+
+        [HttpGet("total-order")]
+        public async Task<ApiRespone> TotalOrder()
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = await this.iAdmin.CalculateTotalOrder()
+            };
+        }
+
+        [HttpGet("total-product")]
+        public async Task<ApiRespone> TotalProduct()
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = await this.iAdmin.CalculateTotalProduct()
+            };
+        }
+
+        [HttpGet("new-orders")]
+        public async Task<ApiRespone> NewOrders()
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = await this.iAdmin.CalculateTotalNewOrder()
+            };
+        }
+
     }
 }
