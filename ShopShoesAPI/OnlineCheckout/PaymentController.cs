@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,7 +16,7 @@ using System.Net;
 
 namespace ShopShoesAPI.OnlineCheckout
 {
-    [Route("api/[controller]")]
+    [Route("api/payment")]
     [ApiController]
     [Authorize(Roles = Roles.User)]
     public class PaymentController : ControllerBase

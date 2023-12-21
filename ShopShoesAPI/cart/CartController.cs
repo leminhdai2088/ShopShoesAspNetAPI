@@ -39,6 +39,20 @@ namespace ShopShoesAPI.cart
             return Ok(result);
         }
 
+        [HttpPost("add-one")]
+        public IActionResult AddOneItemToCart(int productId)
+        {
+            var result = _cartService.AddOneItemToCart(productId);
+            return Ok(result);
+        }
+
+        [HttpPost("minus-one")]
+        public IActionResult MinusOneItemToCart(int productId)
+        {
+            var result = _cartService.MinusOneItemToCart(productId);
+            return Ok(result);
+        }
+
         [HttpPost("remove/{productId}")]
         public IActionResult RemoveFromCart(int productId)
         {

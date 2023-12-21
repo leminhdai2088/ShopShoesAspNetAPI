@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using ShopShoesAPI.cart;
 using ShopShoesAPI.Data;
 using ShopShoesAPI.Enums;
@@ -56,10 +57,12 @@ namespace ShopShoesAPI.order
                 // Sau khi lưu đơn hàng, lấy order.Id mới được tạo
                 foreach (var item in cartItems)
                 {
+                    var product = await this.context.ProductEntities
+                        .FirstOrDefaultAsync(e => e.Id == item.ProductId);
                     var orderDetail = new OrderDetailEntity
                     {
                         Quantity = item.Quantity,
-                        Total = item.Price * item.Quantity,
+                        Total = product.Price * item.Quantity,
                         ProductId = item.ProductId,
                         OrderId = orderId,
                     };

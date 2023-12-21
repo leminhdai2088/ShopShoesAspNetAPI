@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "10520969-a065-4156-886c-433b3785cee2",
+                            Id = "6ba50ea3-a8a2-4c56-bfbc-7d22278cac3f",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "7c494db8-3056-429b-a2ba-22fb30252ce4",
+                            Id = "2c7a6e5b-272a-4a90-a276-04762ac40770",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -414,8 +414,8 @@ namespace ShopShoesAPI.Migrations
                     b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("TransAmount")
-                        .HasColumnType("datetime2");
+                    b.Property<decimal?>("TransAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("TransDate")
                         .HasColumnType("datetime2");
@@ -503,6 +503,9 @@ namespace ShopShoesAPI.Migrations
 
                     b.Property<int>("PayMethod")
                         .HasColumnType("int");
+
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()

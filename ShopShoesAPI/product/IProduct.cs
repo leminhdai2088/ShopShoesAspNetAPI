@@ -6,11 +6,13 @@ namespace ShopShoesAPI.product
     public interface IProduct
     {
         
-        Task<List<ProductDTO>> GetAllProducts();
-        Task<List<ProductDTO>> SearchProducts(string searchString);
-        Task<string> CreateProduct(ProductDTO product);
-        Task<bool> DeleteProduct(int productId);
-        Task<bool> UpdateProduct(int productId, ProductDTO product);
+        public Task<List<ProductDTO>> GetAllProducts();
+        public Task<List<ProductDTO>> SearchProducts(string searchString);
+        public Task<string> CreateProduct(ProductDTO product);
+        public Task<bool> DeleteProduct(int productId);
+        public Task<bool> UpdateProduct(int productId, ProductDTO product);
+        public Task<bool> UpdateProductQty(int productId, int qty);
+        public Task<bool> IsValidBuyQty(int productId, int qty);
     }
 }
 

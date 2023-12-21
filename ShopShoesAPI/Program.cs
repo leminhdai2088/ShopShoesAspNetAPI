@@ -22,6 +22,7 @@ using System.Reflection;
 using PaymentService.Vnpay.Config;
 using ShopShoesAPI.CheckoutServices;
 using ShopShoesAPI.CheckoutServices.Momo.Config;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,18 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<MyDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("MyDb"));
+});
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+           builder =>
+           {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
 });
 
 // Identity
