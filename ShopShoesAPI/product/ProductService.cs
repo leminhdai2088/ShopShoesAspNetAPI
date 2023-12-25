@@ -20,25 +20,78 @@ namespace ShopShoesAPI.user
             this._appSettings = optionsMonitor.CurrentValue;
         }
 
-        public async Task<List<ProductDTO>> GetAllProducts()
+        public async Task<List<ProductDTO>> GetAllProducts(QueryAndPaginateDTO queryAndPaginate)
         {
             try
             {
-                var products = _context.ProductEntities
-                .Select(p => new ProductDTO
-                {
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Quantity = p.Quantity,
-                    Discount = p.Discount,
-                    Image = p.Image,
-                    Rating = p.Rating,
-                    CategoryId = p.CategoryId
-                })
-                .ToList();
+                var query = _context.ProductEntities
+                    .Select(p => new ProductDTO
+                    {
+                        Name = p.Name,
+                        Description = p.Description,
+                        Price = p.Price,
+                        Quantity = p.Quantity,
+                        Discount = p.Discount,
+                        Image = p.Image,
+                        Rating = p.Rating,
+                        CategoryId = p.CategoryId
+                    });
 
+                if (queryAndPaginate != null)
+                {
+                    if (queryAndPaginate.Page > 0 && queryAndPaginate.PageSize > 0)
+                    {
+                        var skipAmount = (queryAndPaginate.Page - 1) * queryAndPaginate.PageSize;
+                        query = query.Skip(skipAmount).Take(queryAndPaginate.PageSize);
+                    }
+
+                    if (!string.IsNullOrEmpty(queryAndPaginate.SortBy))
+                    {
+                        switch (queryAndPaginate.SortBy.ToLower())
+                        {
+                            case "price":
+                                query = query.OrderBy(p => p.Price);
+                                break;
+                            default:
+                                query = query.OrderBy(p => p.Id);
+                                break;
+                        }
+                    }
+                }
+
+                var products = await query.ToListAsync();
                 return products;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ProductDTO> GetProductById(int productId)
+        {
+            try
+            {
+                var product = await _context.ProductEntities.FindAsync(productId);
+                if (product == null)
+                {
+                    return null; // Product not found
+                }
+
+                var productDTO = new ProductDTO
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Quantity = product.Quantity,
+                    Discount = product.Discount,
+                    Image = product.Image,
+                    Rating = product.Rating,
+                    CategoryId = product.CategoryId
+                };
+
+                return productDTO;
             }
             catch (Exception ex)
             {
@@ -87,13 +140,12 @@ namespace ShopShoesAPI.user
                     Image = product.Image,
                     Rating = product.Rating,
                     CategoryId = product.CategoryId
-                    // Map other properties if necessary
                 };
 
                 _context.Add(newProduct);
                 await _context.SaveChangesAsync();
 
-                return "Create product Successfully"; // You may return the created product data if needed
+                return "Create product Successfully";
             }
             catch (Exception ex)
             {
@@ -126,7 +178,7 @@ namespace ShopShoesAPI.user
                 var existingProduct = await _context.ProductEntities.FindAsync(productId);
                 if (existingProduct == null)
                 {
-                    return false; // Product not found
+                    return false;
                 }
 
                 existingProduct.Name = product.Name;
@@ -137,10 +189,9 @@ namespace ShopShoesAPI.user
                 existingProduct.Image = product.Image;
                 existingProduct.Rating = product.Rating;
                 existingProduct.CategoryId = product.CategoryId;
-                // Update other properties as needed
 
                 await _context.SaveChangesAsync();
-                return true; // Product updated successfully
+                return true;
             }
             catch (Exception ex)
             {

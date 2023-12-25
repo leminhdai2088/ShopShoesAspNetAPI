@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShopShoesAPI.common;
 using ShopShoesAPI.user;
+using ShopShoesAPI.product;
 
 namespace ShopShoesAPI.admin
 {
@@ -16,7 +17,17 @@ namespace ShopShoesAPI.admin
         {
             throw new NotImplementedException();
         }
+        public Task<Summary> SummaryStats()
+        {
+            try
+            {
 
+            }
+            catch (Exception ex)           
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public async Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate)
         {
             try

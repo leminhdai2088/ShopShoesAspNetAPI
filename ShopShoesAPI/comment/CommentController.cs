@@ -45,7 +45,7 @@ namespace ShopShoesAPI.comment
         }
 
         [HttpPost("/delete")]
-        public async Task<ActionResult> DeleComment(int productId)
+        public async Task<ActionResult> DeleteComment(int productId)
         {
             try
             {
