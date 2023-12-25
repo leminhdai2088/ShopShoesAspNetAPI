@@ -7,7 +7,7 @@ namespace ShopShoesAPI.user
     {
         public string FullName { get; set; } = null!;
         public string Address { get; set; } = null!;
-
+        public bool Deleted { get; set; } = false;
         public ICollection<OrderEntity> Orders { get; set; }
     }
 }

@@ -17,6 +17,13 @@ using NRedisStack;
 using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 using ShopShoesAPI.cart;
+using ShopShoesAPI.order;
+using System.Reflection;
+using PaymentService.Vnpay.Config;
+using ShopShoesAPI.CheckoutServices;
+using ShopShoesAPI.CheckoutServices.Momo.Config;
+using Microsoft.Extensions.Options;
+using ShopShoesAPI.CheckoutServices.ZaloPay.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +37,18 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<MyDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("MyDb"));
+});
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+           builder =>
+           {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
 });
 
 // Identity
@@ -55,14 +74,33 @@ builder.Services.AddScoped<IEmail, EmailService>();
 builder.Services.AddScoped<IAdmin, AdminService>();
 builder.Services.AddScoped<ICart, CartService>();
 builder.Services.AddScoped<IProduct, ProductService>();
+builder.Services.AddScoped<IOrder, OrderService>();
 
+builder.Services.AddScoped<IMerchant, MerchantService>();
+builder.Services.AddScoped<IPaymentDes, PaymentDesService>();
+builder.Services.AddScoped<IPaymentNoti, PaymentNotiService>();
+builder.Services.AddScoped<IPaymentSig, PaymentSigService>();
+builder.Services.AddScoped<IPaymentTrans, PaymentTransService>();
+builder.Services.AddScoped<IPayment, PaymentServices>();
+
+
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-
+builder.Services.Configure<VnpayConfig>(
+                builder.Configuration.GetSection(VnpayConfig.ConfigName));
+builder.Services.Configure<MomoConfig>(
+                builder.Configuration.GetSection(MomoConfig.ConfigName));
+builder.Services.Configure<ZaloPayConfig>(
+                builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
 // redis
 var redisUri = builder.Configuration["AppSettings:RedisURI"];
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
     ConnectionMultiplexer.Connect(redisUri)
+);
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+    ConnectionMultiplexer.Connect("127.0.0.1:6379")
 );
 
 
@@ -126,6 +164,10 @@ builder.Services.AddSwaggerGen(c =>
             new string[] { }
         }
     });
+
+    var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";  
+    var path = Path.Combine(AppContext.BaseDirectory, xmlFileName);
+    c.IncludeXmlComments(path);
 });
 
 // Configure session state

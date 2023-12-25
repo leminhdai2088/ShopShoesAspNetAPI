@@ -141,6 +141,7 @@ namespace ShopShoesAPI.auth
                     UserName = registerDTO.Email,
                     Address = registerDTO.Address,
                     PhoneNumber = registerDTO.Phone,
+                    Deleted = false,
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
 
@@ -175,6 +176,10 @@ namespace ShopShoesAPI.auth
                 if (user == null)
                 {
                     throw new BadHttpRequestException("Email is not registered");
+                }
+                else if (user.Deleted)
+                {
+                    throw new Exception("User is deleted");
                 }
                 else if (user!= null && (await this.userManager.CheckPasswordAsync(user, loginDTO.Password)) == false)
                 {

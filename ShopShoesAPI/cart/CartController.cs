@@ -26,52 +26,52 @@ namespace ShopShoesAPI.cart
             userId = payloadTokenDTO?.Id;
         }
         [HttpGet]
-        public async Task<IActionResult> GetCartItems()
+        public IActionResult GetCartItems()
         {
-            var cartItems = await _cartService.GetCartItemsAsync(HttpContext);
+            var cartItems = _cartService.GetCartItems();
             return Ok(cartItems);
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddToCart(CartDTO newItem)
+        public IActionResult AddToCart(CartDTO newItem)
         {
-            var result = await _cartService.AddToCartAsync(HttpContext, newItem);
+            var result = _cartService.AddToCart(newItem);
+            return Ok(result);
+        }
+
+        [HttpPost("add-one")]
+        public IActionResult AddOneItemToCart(int productId)
+        {
+            var result = _cartService.AddOneItemToCart(productId);
+            return Ok(result);
+        }
+
+        [HttpPost("minus-one")]
+        public IActionResult MinusOneItemToCart(int productId)
+        {
+            var result = _cartService.MinusOneItemToCart(productId);
             return Ok(result);
         }
 
         [HttpPost("remove/{productId}")]
-        public async Task<IActionResult> RemoveFromCart(int productId)
+        public IActionResult RemoveFromCart(int productId)
         {
-            var result = await _cartService.RemoveFromCartAsync(HttpContext, productId);
+            var result = _cartService.RemoveFromCart(productId);
             return Ok(result);
         }
 
         [HttpPost("clear")]
-        public async Task<IActionResult> ClearCart()
+        public IActionResult ClearCart()
         {
-            var result = await _cartService.ClearCartAsync(HttpContext);
+            var result =  _cartService.ClearCart();
             return Ok(result);
         }
 
         [HttpGet("total")]
-        public async Task<IActionResult> CalculateTotal()
+        public  IActionResult CalculateTotal()
         {
-            var total = await _cartService.CalculateTotalAsync(HttpContext);
+            var total = _cartService.CalculateTotal();
             return Ok(total);
-        }
-
-        [HttpPost("checkout")]
-        public async Task<IActionResult> Checkout([FromBody] OrderDTO orderDTO)
-        {
-            try
-            {
-                var order = await _cartService.CheckoutAsync(HttpContext, userId, orderDTO);
-                return Ok(order);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
         }
     }
 }

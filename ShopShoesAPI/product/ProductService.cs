@@ -198,6 +198,47 @@ namespace ShopShoesAPI.user
                 throw new Exception(ex.Message);
             }
         }
+
+
+
+        public async Task<bool> UpdateProductQty(int productId, int qty)
+        {
+            try
+            {
+                var product = await this._context.ProductEntities.FirstOrDefaultAsync(e => e.Id == productId);
+                if (product == null)
+                {
+                    throw new Exception("Product is not found");
+                }
+                product.Quantity -= qty;
+                this._context.Update(product);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> IsValidBuyQty(int productId, int qty)
+        {
+            try
+            {
+                var product = await this._context.ProductEntities.FirstOrDefaultAsync(e => e.Id == productId);
+                if(product == null)
+                {
+                    throw new Exception("Product is not found");
+                }
+                if (qty > product.Quantity)
+                    return false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
 

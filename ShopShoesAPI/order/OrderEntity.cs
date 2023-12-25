@@ -3,6 +3,7 @@ using ShopShoesAPI.Enums;
 using ShopShoesAPI.user;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ShopShoesAPI.order
 {
@@ -15,12 +16,20 @@ namespace ShopShoesAPI.order
         public string Address { get; set; }
         [Required]
         public OrderStatusEnum Status { get; set; } = OrderStatusEnum.Pending;
-        public string Note { get; set; } = null!;
+        public string Note { get; set; } = String.Empty;
         public PayMethod PayMethod { get; set; } = PayMethod.Cash;
         [Required, Phone]
         public string Phone { get; set; }
 
         public string UserId { get; set; }
+
+        public DateTime? createdAt { get; set; } = DateTime.UtcNow;
+        public DateTime? updatedAt { get; set; }
+
+
+        [AllowNull]
+        public string? PaymentId { get; set; } = string.Empty;
+
 
         [Required]
         public decimal Total { get; set; }

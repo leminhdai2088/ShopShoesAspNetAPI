@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Payment.Domain.Entities;
 using ShopShoesAPI.comment;
 using ShopShoesAPI.common;
 using ShopShoesAPI.order;
 using ShopShoesAPI.product;
 using ShopShoesAPI.user;
-using System.Threading;
 
 namespace ShopShoesAPI.Data
 {
@@ -20,6 +20,14 @@ namespace ShopShoesAPI.Data
         public DbSet<CommentEntity> CommentEntities { get; set; }
         public DbSet<OrderEntity> OrderEntities { get; set; }
         public DbSet<OrderDetailEntity> OrderDetailEntities { get; set; }
+
+        public DbSet<PaymentEntity> PaymentEntities { get; set; }
+        public DbSet<MerchantEntity> MerchantEntities { get; set; }
+        public DbSet<PaymentDestinationEntity> PaymentDesEntities { get; set; }
+        public DbSet<PaymentNotificationEntity> PaymentNotiEntities { get; set; }
+        public DbSet<PaymentSignatureEntity> PaymentSigEntities { get; set; }
+        public DbSet<PaymentTransactionEntity> PaymentTransEntities { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -72,10 +80,40 @@ namespace ShopShoesAPI.Data
                 .Property(o => o.Total)
                 .HasColumnType("decimal(18, 2)");
 
+            modelBuilder.Entity<PaymentNotificationEntity>()
+                .HasOne(x => x.MerchantEntity)
+                .WithMany(x => x.PaymentNotificationEntities)
+                .HasForeignKey(x => x.NotiMerchantId);
+
+            modelBuilder.Entity<PaymentNotificationEntity>()
+                .HasOne(x => x.PaymentEntity)
+                .WithMany(x => x.PaymentNotificationEntities)
+                .HasForeignKey(x => x.NotiPaymentId);
+
+            modelBuilder.Entity<PaymentEntity>()
+                .HasOne(x => x.MerchantEntity)
+                .WithMany(x => x.PaymentEntities)
+                .HasForeignKey(x => x.MerchantId);
+
+            modelBuilder.Entity<PaymentEntity>()
+                .HasOne(x => x.PaymentDestinationEntity)
+                .WithMany(x => x.PaymentEntities)
+                .HasForeignKey(x => x.PaymentDesId);
+
+            modelBuilder.Entity<PaymentTransactionEntity>()
+                .HasOne(x => x.PaymentEntity)
+                .WithMany(x => x.PaymentTransactionEntities)
+                .HasForeignKey(x => x.PaymentId);
+
+            modelBuilder.Entity<PaymentSignatureEntity>()
+                .HasOne(x => x.PaymentEntity)
+                .WithMany(x => x.PaymentSignatureEntities)
+                .HasForeignKey(x => x.PaymentId);
 
             base.OnModelCreating(modelBuilder);
 
             SeedRoles(modelBuilder);
+            SeedCategories(modelBuilder);
         }
 
         private static void SeedRoles(ModelBuilder modelBuilder)
@@ -83,6 +121,17 @@ namespace ShopShoesAPI.Data
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin"},
                 new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "User" }
+                );
+        }
+
+        private static void SeedCategories(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CategoryEntity>().HasData(
+                new CategoryEntity() { Id  = 1, Name = "Category 1" },
+                new CategoryEntity() { Id = 2, Name = "Category 2" },
+                new CategoryEntity() { Id = 3, Name = "Category 3" },
+                new CategoryEntity() { Id = 4, Name = "Category 4" },
+                new CategoryEntity() { Id = 5, Name = "Category 5" }
                 );
         }
 
