@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Payment.Ultils.Helpers;
+using ShopShoesAPI.CheckoutServices.ZaloPay.Response;
 
 namespace ShopShoesAPI.CheckoutServices.ZaloPay.Request
 {
@@ -62,13 +63,13 @@ namespace ShopShoesAPI.CheckoutServices.ZaloPay.Request
                 var responseContent = response.Content.ReadAsStringAsync().Result;
                 var responseData = JsonConvert
                     .DeserializeObject<CreateZalopayPayResponse>(responseContent);
-                if (responseData.returnCode == 1)
+                if (responseData?.returnCode == 1)
                 {
                     return (true, responseData.orderUrl);
                 }
                 else
                 {
-                    return (false, responseData.returnMessage);
+                    return (false, responseData?.returnMessage);
                 }
 
             }

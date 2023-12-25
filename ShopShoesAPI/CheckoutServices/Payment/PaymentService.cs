@@ -1,11 +1,8 @@
-﻿using Azure.Messaging;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using Payment.Domain.Entities;
+using Payment.Ultils.Extentions;
 using PaymentService.Momo.Request;
 using PaymentService.Vnpay.Config;
 using PaymentService.Vnpay.Request;
@@ -14,6 +11,8 @@ using ShopShoesAPI.cart;
 using ShopShoesAPI.CheckoutServices.Momo.Config;
 using ShopShoesAPI.CheckoutServices.Momo.Request;
 using ShopShoesAPI.CheckoutServices.Momo.Response;
+using ShopShoesAPI.CheckoutServices.ZaloPay.Config;
+using ShopShoesAPI.CheckoutServices.ZaloPay.Request;
 using ShopShoesAPI.Data;
 using ShopShoesAPI.Enums;
 using ShopShoesAPI.order;
@@ -25,6 +24,8 @@ namespace ShopShoesAPI.CheckoutServices
         private readonly MyDbContext context;
         private readonly VnpayConfig vnpayConfig;
         private readonly MomoConfig momoConfig;
+        private readonly ZaloPayConfig zaloPayConfig;
+
 
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly string? IpAddress;
@@ -41,7 +42,8 @@ namespace ShopShoesAPI.CheckoutServices
 
         public PaymentServices(MyDbContext context, IOptions<VnpayConfig> vnpayConfigOption,
             IHttpContextAccessor httpContextAccessor, IMerchant merchant,
-            IOptions<MomoConfig> momoConfigOption, ICart cart, IOrder order)
+            IOptions<MomoConfig> momoConfigOption, ICart cart, IOrder order,
+            IOptions<ZaloPayConfig> zaloPayConfigOption)
         {
             this.context = context;
             this.vnpayConfig = vnpayConfigOption.Value;
@@ -49,6 +51,7 @@ namespace ShopShoesAPI.CheckoutServices
             this.IpAddress = this.httpContextAccessor?.HttpContext?.Connection?.LocalIpAddress?.ToString();
             this.merchant = merchant;
             this.momoConfig = momoConfigOption.Value;
+            this.zaloPayConfig = zaloPayConfigOption.Value;
             this.cart = cart;
             this.order = order;
         }   
@@ -133,6 +136,17 @@ namespace ShopShoesAPI.CheckoutServices
                         if (createMomoLinkResult)
                         {
                             paymentUrl = createMessage;
+                        }
+                        break;
+                    case "ZALOPAY":
+                        var zalopayPayRequest = new CreateZalopayPayRequest(zaloPayConfig.AppId, zaloPayConfig.AppUser,
+                                DateTime.Now.GetTimeStamp(), (long)RequiredAmount!, DateTime.Now.ToString("yymmdd") + "_" + payment.Id.ToString() ?? string.Empty,
+                                "zalopayapp", paymentDto.PaymentContent ?? string.Empty);
+                        zalopayPayRequest.MakeSignature(zaloPayConfig.Key1);
+                        (bool createZaloLinkResult, string? createZaloPayMessage) = zalopayPayRequest.GetLink(zaloPayConfig.PaymentUrl);
+                        if (createZaloLinkResult)
+                        {
+                            paymentUrl = createZaloPayMessage;
                         }
                         break;
                     default: 

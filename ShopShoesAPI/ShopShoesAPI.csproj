@@ -38,7 +38,6 @@
 
   <ItemGroup>
     <Folder Include="CheckoutServices\Momo\Lib\" />
-    <Folder Include="CheckoutServices\ZaloPay\Response\" />
   </ItemGroup>
 
 </Project>

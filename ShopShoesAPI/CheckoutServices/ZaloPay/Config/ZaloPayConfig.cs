@@ -3,15 +3,12 @@
     public class ZaloPayConfig
     {
         public static string ConfigName => "ZaloPay";
-        public static string? AppUser {  get; set; } = string.Empty;
-        public static string? PaymentUrl { get; set; } = string.Empty;
-        public static string? RedirectUrl { get; set; } = string.Empty;
-        public static string? InpUrl { get; set; } = string.Empty;
-        public static string? AppId { get; set; } = string.Empty;
-        public static string? Key1 { get; set; } = string.Empty;
-        public static string? Key2 { get; set; } = string.Empty;
-
-
-
+        public string? AppUser {  get; set; } = string.Empty;
+        public string? PaymentUrl { get; set; } = string.Empty;
+        public string? RedirectUrl { get; set; } = string.Empty;
+        public string? InpUrl { get; set; } = string.Empty;
+        public int AppId { get; set; }
+        public string? Key1 { get; set; } = string.Empty;
+        public string? Key2 { get; set; } = string.Empty;
     }
 }
