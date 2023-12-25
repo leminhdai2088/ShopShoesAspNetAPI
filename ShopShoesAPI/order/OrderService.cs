@@ -22,7 +22,6 @@ namespace ShopShoesAPI.order
 
         public async Task<bool> CheckoutAsync(string userId, OrderDTO orderDTO, string? paymentId = null)
         {
-
             try
             {
                 var cartItems = this.iCart.GetCartItems();
@@ -47,6 +46,7 @@ namespace ShopShoesAPI.order
                     PayMethod = orderDTO.payMethod,
                     Total = this.iCart.CalculateTotal(),
                     PaymentId = paymentId,
+                    createdAt = DateTime.UtcNow
                 };
                  // Lấy tổng giá tiền từ giỏ hàng
                 // Thêm đơn đặt hàng vào cơ sở dữ liệu
@@ -66,7 +66,6 @@ namespace ShopShoesAPI.order
                         ProductId = item.ProductId,
                         OrderId = orderId,
                     };
-
                     await this.context.AddAsync(orderDetail);
                 }
                 await this.context.SaveChangesAsync();

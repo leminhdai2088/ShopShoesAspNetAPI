@@ -159,7 +159,7 @@ namespace ShopShoesAPI.user
                 {
                     throw new Exception("Product is not found");
                 }
-                product.Quantity = product.Quantity - qty;
+                product.Quantity -= qty;
                 this._context.Update(product);
                 await _context.SaveChangesAsync();
                 return true;
@@ -179,11 +179,8 @@ namespace ShopShoesAPI.user
                 {
                     throw new Exception("Product is not found");
                 }
-                if(qty > product.Quantity)
-                {
-                    throw new Exception("The quantity purchased cannot be greater than the quantity in stock");
-
-                }
+                if (qty > product.Quantity)
+                    return false;
                 return true;
             }
             catch (Exception ex)

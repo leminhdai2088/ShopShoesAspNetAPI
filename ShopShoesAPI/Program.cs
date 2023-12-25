@@ -23,6 +23,7 @@ using PaymentService.Vnpay.Config;
 using ShopShoesAPI.CheckoutServices;
 using ShopShoesAPI.CheckoutServices.Momo.Config;
 using Microsoft.Extensions.Options;
+using ShopShoesAPI.CheckoutServices.ZaloPay.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,7 +92,8 @@ builder.Services.Configure<VnpayConfig>(
                 builder.Configuration.GetSection(VnpayConfig.ConfigName));
 builder.Services.Configure<MomoConfig>(
                 builder.Configuration.GetSection(MomoConfig.ConfigName));
-
+builder.Services.Configure<ZaloPayConfig>(
+                builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
 // redis
 var redisUri = builder.Configuration["AppSettings:RedisURI"];
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
