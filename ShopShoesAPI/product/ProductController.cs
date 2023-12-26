@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShopShoesAPI.user;
+using ShopShoesAPI.common;
 using System.Threading.Tasks;
 
 namespace ShopShoesAPI.product
@@ -15,9 +16,9 @@ namespace ShopShoesAPI.product
             this.iProduct = iProduct;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts([FromQuery] QueryAndPaginateDTO queryAndPaginate)
         {
-            var products = await iProduct.GetAllProducts();
+            var products = await iProduct.GetAllProducts(queryAndPaginate);
             return Ok(products);
         }
 
@@ -42,7 +43,7 @@ namespace ShopShoesAPI.product
             }
         }
 
-        [HttpPost("/delete")]
+        [HttpPost("/delete/{productId}")]
         public async Task<ActionResult> DeleteProduct(int productId)
         {
             try
@@ -77,6 +78,18 @@ namespace ShopShoesAPI.product
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet]
+        [Route("/{productId}")]
+        public async Task<ActionResult> GetProductById(int productId)
+        {
+            var product = await iProduct.GetProductById(productId);
+            if (product)
+            {
+                return Ok(product);
+            }
+            return NotFound("Product not found");
         }
     }
 }

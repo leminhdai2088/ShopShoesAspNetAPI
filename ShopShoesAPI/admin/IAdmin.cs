@@ -8,7 +8,9 @@ namespace ShopShoesAPI.admin
     public interface IAdmin
     {
         // user
-        public Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate, StatusUserEnum? statusUserEnum); 
+        public Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate, StatusUserEnum? statusUserEnum);
+
+        public Task<Summary> SummaryStats();
         public Task<bool> DeleteUserById(string id);
 
         // order

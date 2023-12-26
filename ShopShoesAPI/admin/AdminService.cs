@@ -5,6 +5,7 @@ using ShopShoesAPI.Data;
 using ShopShoesAPI.enums;
 using ShopShoesAPI.Enums;
 using ShopShoesAPI.user;
+using ShopShoesAPI.product;
 
 namespace ShopShoesAPI.admin
 {
@@ -41,8 +42,18 @@ namespace ShopShoesAPI.admin
                 throw new Exception(ex.Message);
             }
         }
+        public Task<Summary> SummaryStats()
+        {
+            try
+            {
 
-        public async Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate, StatusUserEnum? statusUserEnum = StatusUserEnum.All)
+            }
+            catch (Exception ex)           
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate)
         {
             try
             {
