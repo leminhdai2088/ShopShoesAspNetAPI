@@ -17,7 +17,6 @@ namespace ShopShoesAPI.order
             this.iCart = iCart;
             this.userManager = userManager;
             this.context = context;
-    
         }
 
         public async Task<bool> CheckoutAsync(string userId, OrderDTO orderDTO, string? paymentId = null)
@@ -79,5 +78,9 @@ namespace ShopShoesAPI.order
             }
         }
 
+        public Task<bool> HandleStatus(int orderId, OrderStatusEnum status)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

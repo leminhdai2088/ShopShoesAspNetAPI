@@ -184,11 +184,12 @@ namespace ShopShoesAPI.CheckoutServices
 
         public async Task<(PaymentReturnDto, string)> ProcessVnpayPaymentReturn(string userId, VnpayResponse request)
         {
+            var payment = await FindById(Int32.Parse(request.vnp_TxnRef));
+            string returnUrl = string.Empty;
+            var resultData = new PaymentReturnDto();
+            var isValidSignature = request.IsValidSignature(vnpayConfig.HashSecret);
             try
             {
-                string returnUrl = string.Empty;
-                var resultData = new PaymentReturnDto();
-                var isValidSignature = request.IsValidSignature(vnpayConfig.HashSecret);
                 /*
                 respone code: 
                     00: success
@@ -199,9 +200,10 @@ namespace ShopShoesAPI.CheckoutServices
                 {
                     if (request.vnp_ResponseCode == "00")
                     {
-                        var payment = await FindById(Int32.Parse(request.vnp_TxnRef));
                         if (payment != null)
                         {
+                            payment.PaymentStatus = "00";
+
                             var merchant = await this.merchant.FindById(payment.MerchantId);
 
                             returnUrl = merchant?.MerchantReturnUrl ?? string.Empty;
@@ -224,11 +226,13 @@ namespace ShopShoesAPI.CheckoutServices
                         else
                         {
                             resultData.PaymentStatus = "11";
+                            payment.PaymentStatus = "11";
                             resultData.PaymentMessage = "Can't find payment";
                         }
                     }
                     else
                     {
+                        payment.PaymentStatus = "10";
                         resultData.PaymentStatus = "10";
                         resultData.PaymentMessage = "Payment proceess failed";
                     }
@@ -236,13 +240,22 @@ namespace ShopShoesAPI.CheckoutServices
                 else
                 {
                     resultData.PaymentStatus = "99";
+                    payment.PaymentStatus = "99";
                     resultData.PaymentMessage = "Payment proceess failed";
                 }
-                return (resultData, returnUrl);
+                
             }catch(Exception ex)
             {
-                throw new Exception(ex.Message);
+                resultData.PaymentStatus = "99";
+                payment.PaymentStatus = "99";
+                resultData.PaymentMessage = "Payment proceess failed";
             }
+            finally
+            {
+                this.context.PaymentEntities.Update(payment);
+                await this.context.SaveChangesAsync();
+            }
+            return (resultData, returnUrl);
         }
 
         public async Task<VnpayPayIpnResponse> ProcessVnpayPaymentIpn(VnpayResponse request)
@@ -328,16 +341,15 @@ namespace ShopShoesAPI.CheckoutServices
         {
             string returnUrl = string.Empty;
             var resultData = new PaymentReturnDto();
-            try
-            {   
-                var isValidSignature = request.IsValidSignature(
+            var isValidSignature = request.IsValidSignature(
                     this.momoConfig.AccessKey, this.momoConfig.SecretKey);
 
+            var payment = await this.context.PaymentEntities
+                .FirstOrDefaultAsync(e => e.Id.ToString() == request.orderId);
+            try
+            {   
                 if (isValidSignature)
                 {
-                    var payment = await this.context.PaymentEntities
-                        .FirstOrDefaultAsync(e => e.Id.ToString() == request.orderId);
-
                     if (payment != null)
                     {
                         var merchant = await this.context.MerchantEntities
@@ -347,6 +359,7 @@ namespace ShopShoesAPI.CheckoutServices
                         if(request.resultCode == 0)
                         {
                             resultData.PaymentStatus = "00";
+                            payment.PaymentStatus = "00";
                             resultData.PaymentId = payment.Id;
                             resultData.Signature = Guid.NewGuid().ToString();
                             resultData.PaymentMessage = "Success";
@@ -354,18 +367,21 @@ namespace ShopShoesAPI.CheckoutServices
                         else
                         {
                             resultData.PaymentStatus = "10";
+                            payment.PaymentStatus = "10";
                             resultData.PaymentMessage = "Payment process failed";
                         }
                     }
                     else
                     {
                         resultData.PaymentStatus = "11";
+                        payment.PaymentStatus = "11";
                         resultData.PaymentMessage = "Payment is not found";
                     }
                 }
                 else
                 {
                     resultData.PaymentStatus = "99";
+                    payment.PaymentStatus = "99";
                     resultData.PaymentMessage = "Invalid sinature";
 
                 }
@@ -373,7 +389,13 @@ namespace ShopShoesAPI.CheckoutServices
             catch (Exception ex)
             {
                 resultData.PaymentStatus = "99";
+                payment.PaymentStatus = "99";
                 resultData.PaymentMessage = "Failed catched";
+            }
+            finally
+            {
+                this.context.PaymentEntities.Update(payment);
+                await this.context.SaveChangesAsync();
             }
             return (resultData, returnUrl);
         }
