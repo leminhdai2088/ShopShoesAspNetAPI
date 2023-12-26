@@ -42,18 +42,7 @@ namespace ShopShoesAPI.admin
                 throw new Exception(ex.Message);
             }
         }
-        public Task<Summary> SummaryStats()
-        {
-            try
-            {
-
-            }
-            catch (Exception ex)           
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        public async Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate)
+        public async Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate, StatusUserEnum? statusUserEnum)
         {
             try
             {

@@ -80,7 +80,7 @@ namespace ShopShoesAPI.order
 
         public Task<bool> HandleStatus(int orderId, OrderStatusEnum status)
         {
-            throw new NotImplementedException();
+            throw new Exception();
         }
     }
 }

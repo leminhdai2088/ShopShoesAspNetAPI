@@ -85,7 +85,7 @@ namespace ShopShoesAPI.product
         public async Task<ActionResult> GetProductById(int productId)
         {
             var product = await iProduct.GetProductById(productId);
-            if (product)
+            if (product != null)
             {
                 return Ok(product);
             }

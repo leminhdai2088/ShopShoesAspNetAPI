@@ -10,7 +10,6 @@ namespace ShopShoesAPI.admin
         // user
         public Task<List<UserDTO>> FindAllUser(QueryAndPaginateDTO queryAndPaginate, StatusUserEnum? statusUserEnum);
 
-        public Task<Summary> SummaryStats();
         public Task<bool> DeleteUserById(string id);
 
         // order
@@ -21,7 +20,5 @@ namespace ShopShoesAPI.admin
         public Task<int> CalculateTotalOrder();
         public Task<int> CalculateTotalProduct();
         public Task<object[]> CalculateTotalNewOrder();
-
-
     }
 }
