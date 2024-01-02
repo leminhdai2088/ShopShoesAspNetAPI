@@ -375,3 +375,4 @@ src/MessagePack.UnityClient/appsettings.json
 
 # BenchmarkDotNet results
 BenchmarkDotNet.Artifacts/
+ShopShoesAPI/appsettings.json

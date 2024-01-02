@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "75e6b396-dacb-4834-9b09-99e3a08c3730",
+                            Id = "8fd2f069-93da-4e81-b21d-215f9a0d28c7",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "af620f55-b31d-4de9-b91b-fd33e093ca60",
+                            Id = "60a0c50a-8cf8-4331-8d23-a0c10a3e4c00",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"

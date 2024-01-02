@@ -42,12 +42,12 @@ builder.Services.AddDbContext<MyDbContext>(option =>
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
+    options.AddPolicy("AllowSpecificOrigin",
            builder =>
            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
+               builder.WithOrigins("http://localhost:4000")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
             });
 });
 
@@ -188,6 +188,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
 
