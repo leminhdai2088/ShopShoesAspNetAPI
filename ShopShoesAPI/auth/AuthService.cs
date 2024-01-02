@@ -197,8 +197,12 @@ namespace ShopShoesAPI.auth
                     {
                         throw new Exception("Failed to save refresh token");
                     }
+
+                    var role = await this.userManager.GetRolesAsync(user);
                     return new TokenDTO
                     {
+                        Id = user.Id,
+                        Role = role,
                         AccessToken = accessToken,
                         RefreshToken = refreshToken,
                     };
