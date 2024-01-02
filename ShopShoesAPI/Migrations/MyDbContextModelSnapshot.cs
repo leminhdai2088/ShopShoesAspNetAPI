@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6ba50ea3-a8a2-4c56-bfbc-7d22278cac3f",
+                            Id = "75e6b396-dacb-4834-9b09-99e3a08c3730",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "2c7a6e5b-272a-4a90-a276-04762ac40770",
+                            Id = "af620f55-b31d-4de9-b91b-fd33e093ca60",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -520,6 +520,12 @@ namespace ShopShoesAPI.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("updatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

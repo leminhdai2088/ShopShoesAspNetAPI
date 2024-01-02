@@ -12,12 +12,20 @@ namespace ShopShoesAPI.user
     {
         private readonly MyDbContext _context;
         private readonly AppSettings _appSettings;
-        
-        
+
         public ProductService(MyDbContext context, IOptionsMonitor<AppSettings> optionsMonitor)
         {
             this._context = context;
             this._appSettings = optionsMonitor.CurrentValue;
+        }
+
+        public ProductService(MyDbContext context)
+        {
+            this._context = context;
+        }
+
+        public ProductService()
+        {
         }
 
         public async Task<List<ProductDTO>> GetAllProducts(QueryAndPaginateDTO queryAndPaginate)
@@ -39,15 +47,15 @@ namespace ShopShoesAPI.user
 
                 if (queryAndPaginate != null)
                 {
-                    if (queryAndPaginate.Page > 0 && queryAndPaginate.PageSize > 0)
+                    if (queryAndPaginate.pageIndex > 0 && queryAndPaginate.pageSize > 0)
                     {
-                        var skipAmount = (queryAndPaginate.Page - 1) * queryAndPaginate.PageSize;
-                        query = query.Skip(skipAmount).Take(queryAndPaginate.PageSize);
+                        var skipAmount = (queryAndPaginate.pageIndex - 1) * queryAndPaginate.pageSize;
+                        query = query.Skip(skipAmount).Take(queryAndPaginate.pageSize);
                     }
 
-                    if (!string.IsNullOrEmpty(queryAndPaginate.SortBy))
+                    if (!string.IsNullOrEmpty(queryAndPaginate.sortBy))
                     {
-                        switch (queryAndPaginate.SortBy.ToLower())
+                        switch (queryAndPaginate.sortBy.ToLower())
                         {
                             case "price":
                                 query = query.OrderBy(p => p.Price);
@@ -211,7 +219,7 @@ namespace ShopShoesAPI.user
                     throw new Exception("Product is not found");
                 }
                 product.Quantity -= qty;
-                this._context.Update(product);
+                this._context.ProductEntities.Update(product);
                 await _context.SaveChangesAsync();
                 return true;
             }

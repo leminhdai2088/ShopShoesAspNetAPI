@@ -12,13 +12,20 @@ namespace ShopShoesAPI.user
         private readonly AppSettings _appSettings;
         private readonly UserManager<UserEnityIndetity> userManager;
 
-        public UserService(MyDbContext context, IOptionsMonitor<AppSettings> optionsMonitor, 
+        public UserService(MyDbContext context, IOptionsMonitor<AppSettings> optionsMonitor,
             UserManager<UserEnityIndetity> userManager)
         {
             this._context = context;
             this._appSettings = optionsMonitor.CurrentValue;
             this.userManager = userManager;
         }
+
+        public UserService(MyDbContext context, UserManager<UserEnityIndetity> userManager)
+        {
+            this._context = context;
+            this.userManager = userManager;
+        }
+
         public async Task<UserDTO> FindById(string id)
         {
             try

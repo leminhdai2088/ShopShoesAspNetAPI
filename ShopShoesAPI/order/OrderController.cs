@@ -37,6 +37,17 @@ namespace ShopShoesAPI.order
                 Metadata = await this.iOrder.CheckoutAsync(userId, orderDTO, null)
             };
         }
+
+        [HttpPatch("status")]
+        public async Task<ApiRespone> HandleStatus([FromBody] ChangeStatusDto changeStatus)
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Message = "Change status successfully",
+                Metadata = await this.iOrder.HandleStatus(changeStatus)
+            };
+        }
     }
 
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ShopShoesAPI.cart;
 using ShopShoesAPI.Data;
 using ShopShoesAPI.Enums;
+using ShopShoesAPI.product;
 using ShopShoesAPI.user;
 
 namespace ShopShoesAPI.order
@@ -10,13 +11,15 @@ namespace ShopShoesAPI.order
     public class OrderService : IOrder
     {
         private readonly ICart iCart;
+        private readonly IProduct product;
         private readonly MyDbContext context;
         private readonly UserManager<UserEnityIndetity> userManager;
-        public OrderService(ICart iCart, UserManager<UserEnityIndetity> userManager, MyDbContext context)
+        public OrderService(ICart iCart, UserManager<UserEnityIndetity> userManager, MyDbContext context, IProduct product)
         {
             this.iCart = iCart;
             this.userManager = userManager;
             this.context = context;
+            this.product = product;
         }
 
         public async Task<bool> CheckoutAsync(string userId, OrderDTO orderDTO, string? paymentId = null)
@@ -78,9 +81,61 @@ namespace ShopShoesAPI.order
             }
         }
 
-        public Task<bool> HandleStatus(int orderId, OrderStatusEnum status)
+        public async Task<bool> HandleStatus(ChangeStatusDto changeStatus)
         {
-            throw new Exception();
+            var transaction = this.context.Database;
+            try
+            {
+                await transaction.BeginTransactionAsync();
+                var order = await this.context.OrderEntities
+                    .FirstOrDefaultAsync (e => e.Id == changeStatus.orderId);
+                if(order == null)
+                {
+                    throw new Exception("Order is not found");
+                }
+                if(
+                    (order.Status == OrderStatusEnum.Pending && (changeStatus.status == OrderStatusEnum.Confirmed || changeStatus.status == OrderStatusEnum.Cancelled)) ||
+                    (order.Status == OrderStatusEnum.Shipped && changeStatus.status == OrderStatusEnum.Completed)
+                    )
+                {
+                    order.Status = changeStatus.status;
+                    this.context.OrderEntities.Update(order);
+                    await this.context.SaveChangesAsync();
+                    await transaction.CommitTransactionAsync();
+                    return true;
+                }
+                else if (order.Status == OrderStatusEnum.Confirmed && (changeStatus.status == OrderStatusEnum.Shipped || changeStatus.status == OrderStatusEnum.Completed))
+                {
+                    var orderDetail = await this.context.OrderDetailEntities
+                        .Where(e => e.OrderId == order.Id)
+                        .ToArrayAsync();
+
+                    foreach (var item in orderDetail)
+                    {
+                        var productId = item.ProductId;
+                        var qty = item.Quantity;
+                        await this.product.UpdateProductQty(productId, qty);
+                    }
+                    order.Status = changeStatus.status;
+                    this.context.OrderEntities.Update(order);
+                    await this.context.SaveChangesAsync();
+                    await transaction.CommitTransactionAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackTransactionAsync();
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                await transaction.CloseConnectionAsync();
+            }
         }
     }
 }
