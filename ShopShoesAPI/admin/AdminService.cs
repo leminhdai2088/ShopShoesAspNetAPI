@@ -131,16 +131,24 @@ namespace ShopShoesAPI.admin
                 }
                 var orders = await query
                     .Include(x => x.User)
-                        .ThenInclude(u => u.Id)
-                    .Include(x => x.User)
-                        .ThenInclude(u => u.FullName)
-                    .Include(x => x.User)
-                        .ThenInclude(u => u.Email)
-                    .Include(x => x.User)
-                        .ThenInclude(u => u.PhoneNumber )
                     .OrderBy(x => x.Id)
                     .Skip((queryAndPaginate.pageIndex - 1) * queryAndPaginate.pageSize)
                     .Take(queryAndPaginate.pageSize)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.PayMethod,
+                        x.Status,
+                        x.Total,
+                        x.PaymentId,
+                        x.Address,
+                        x.User.UserName,
+                        x.User.Email,
+                        x.User.PhoneNumber,
+                        x.createdAt,
+                        x.Phone,
+                        x.Note
+                    })
                     .ToListAsync();
                 return orders;
             }

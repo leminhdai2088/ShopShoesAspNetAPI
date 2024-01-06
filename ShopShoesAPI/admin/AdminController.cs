@@ -5,6 +5,7 @@ using ShopShoesAPI.auth;
 using ShopShoesAPI.common;
 using ShopShoesAPI.enums;
 using ShopShoesAPI.Enums;
+using ShopShoesAPI.order;
 using System.Net;
 
 namespace ShopShoesAPI.admin
@@ -16,10 +17,12 @@ namespace ShopShoesAPI.admin
     {
         private readonly IAdmin iAdmin;
         private readonly IAuth iAuth;
-        public AdminController(IAdmin iAdmin, IAuth iAuth)
+        private readonly IOrder iOrder;
+        public AdminController(IAdmin iAdmin, IAuth iAuth, IOrder iOrder)
         {
             this.iAdmin = iAdmin;
             this.iAuth = iAuth;
+            this.iOrder = iOrder;
         }
 
         [HttpGet("users")]
@@ -103,6 +106,17 @@ namespace ShopShoesAPI.admin
             {
                 Status = (int)HttpStatusCode.OK,
                 Metadata = await this.iAdmin.CalculateTotalNewOrder()
+            };
+        }
+
+        [HttpPatch("status")]
+        public async Task<ApiRespone> HandleStatus([FromBody] ChangeStatusDto changeStatus)
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Message = "Change status successfully",
+                Metadata = await this.iOrder.HandleStatus(changeStatus)
             };
         }
 

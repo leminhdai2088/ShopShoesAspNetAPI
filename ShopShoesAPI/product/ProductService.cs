@@ -220,7 +220,7 @@ namespace ShopShoesAPI.user
                 }
                 product.Quantity -= qty;
                 this._context.ProductEntities.Update(product);
-                await _context.SaveChangesAsync();
+                await this._context.SaveChangesAsync();
                 return true;
             }
             catch(Exception ex)

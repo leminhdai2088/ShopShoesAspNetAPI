@@ -54,13 +54,15 @@ namespace ShopShoesAPI.auth
             }; 
         }
 
-        [HttpGet("test")]
-        [Authorize(Roles = Roles.User)]
-        public IActionResult Test()
+        [HttpPost("verify-accessToken")]
+        public ApiRespone VerifyAccessToken([FromBody] string token)
         {
-            // Lấy token từ header Authorization
-            var authorizationHeader = Request.Headers.Authorization;
-            return Ok(_iAuth.VerifyAccessToken(authorizationHeader!));
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Message = "Ok",
+                Metadata = _iAuth.VerifyAccessToken(token)
+            };
         }
 
         [HttpGet("testEmail")]
@@ -73,6 +75,5 @@ namespace ShopShoesAPI.auth
    
         }
     }
-
-    }
+}
 
