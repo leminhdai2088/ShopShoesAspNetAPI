@@ -24,6 +24,7 @@ using ShopShoesAPI.CheckoutServices;
 using ShopShoesAPI.CheckoutServices.Momo.Config;
 using Microsoft.Extensions.Options;
 using ShopShoesAPI.CheckoutServices.ZaloPay.Config;
+using ShopShoesAPI.comment;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +76,8 @@ builder.Services.AddScoped<IAdmin, AdminService>();
 builder.Services.AddScoped<ICart, CartService>();
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IOrder, OrderService>();
+builder.Services.AddScoped<IComment, CommentService>();
+
 
 builder.Services.AddScoped<IMerchant, MerchantService>();
 builder.Services.AddScoped<IPaymentDes, PaymentDesService>();

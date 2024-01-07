@@ -6,7 +6,7 @@ using ShopShoesAPI.product;
 
 namespace ShopShoesAPI.comment
 {
-    public class CommentService
+    public class CommentService: IComment
     {
         private readonly MyDbContext _context;
         private readonly AppSettings _appSettings;
@@ -21,12 +21,13 @@ namespace ShopShoesAPI.comment
         {
             try
             {
-                var comments = await _context.CommentEntities
+                var comments = await this._context.CommentEntities
                     .Where(c => c.ProductId == productId)
                     .Select(c => new CommentDTO
                     {
                         Rating = c.Rating,
                         Content = c.Content,
+                        ProductId = productId
                     }).ToListAsync();
                 return comments; // Product updated successfully
             }
@@ -47,8 +48,8 @@ namespace ShopShoesAPI.comment
                     ProductId = comment.ProductId,
                 };
 
-                _context.Add(newComment);
-                await _context.SaveChangesAsync();
+                this._context.Add(newComment);
+                await this._context.SaveChangesAsync();
 
                 return "Comment Successfully";
             }
@@ -62,14 +63,14 @@ namespace ShopShoesAPI.comment
         {
             try
             {
-                var comment = await _context.CommentEntities.FindAsync(commentId);
+                var comment = await this._context.CommentEntities.FindAsync(commentId);
                 if (comment == null)
                 {
                     return false;
                 }
 
-                _context.CommentEntities.Remove(comment);
-                await _context.SaveChangesAsync();
+                this._context.CommentEntities.Remove(comment);
+                await this._context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
@@ -82,7 +83,7 @@ namespace ShopShoesAPI.comment
         {
             try
             {
-                var existingComment = await _context.CommentEntities.FindAsync(commentId);
+                var existingComment = await this._context.CommentEntities.FindAsync(commentId);
                 if (existingComment == null)
                 {
                     return false;

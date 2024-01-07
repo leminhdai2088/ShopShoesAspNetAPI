@@ -19,7 +19,7 @@ namespace ShopShoesAPI.comment
         {
             try
             {
-                var comments = await iComment.GetAllCommentsForProduct(productId);
+                var comments = await this.iComment.GetAllCommentsForProduct(productId);
 
                 return Ok(comments);
             } catch (Exception ex)
@@ -34,7 +34,7 @@ namespace ShopShoesAPI.comment
         {
             try
             {
-                var result = await iComment.CreateComment(comment);
+                var result = await this.iComment.CreateComment(comment);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -43,12 +43,12 @@ namespace ShopShoesAPI.comment
             }
         }
 
-        [HttpPost("/delete")]
-        public async Task<ActionResult> DeleteComment(int productId)
+        [HttpPost("/delete/{commentId}")]
+        public async Task<ActionResult> DeleteComment([FromRoute] int commentId)
         {
             try
             {
-                var result = await iComment.DeleteComment(productId);
+                var result = await this.iComment.DeleteComment(commentId);
                 if (result)
                 {
                     return Ok("Product deleted successfully");
@@ -62,11 +62,11 @@ namespace ShopShoesAPI.comment
         }
 
         [HttpPut("UpdateComment/{commentId}")]
-        public async Task<ActionResult> EditComment(int commentId, [FromBody] CommentDTO comment)
+        public async Task<ActionResult> EditComment([FromRoute] int commentId, [FromBody] CommentDTO comment)
         {
             try
             {
-                var result = await iComment.EditComment(commentId, comment);
+                var result = await this.iComment.EditComment(commentId, comment);
                 if (result)
                 {
                     return Ok("Comment has edited successfully");

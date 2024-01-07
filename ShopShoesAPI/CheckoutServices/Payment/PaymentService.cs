@@ -68,16 +68,15 @@ namespace ShopShoesAPI.CheckoutServices
             try
             {
                 await transaction.BeginTransactionAsync();
-
+                var orderDTO = new OrderDTO
+                {
+                    Phone = paymentDto.Phone,
+                    Address = paymentDto.Address,
+                    Note = paymentDto.Note,
+                    payMethod = paymentDto.payMethod
+                };
                 if (paymentDto.payMethod == PayMethod.Cash || paymentDto.PaymentDesId == 0)
                 {
-                    var orderDTO = new OrderDTO
-                    {
-                        Phone = paymentDto.Phone,
-                        Address = paymentDto.Address,
-                        Note = paymentDto.Note,
-                        payMethod = paymentDto.payMethod
-                    };
                     var result = await this.order.CheckoutAsync(userId, orderDTO, null);
                     await transaction.CommitTransactionAsync();
                     await transaction.CloseConnectionAsync();
@@ -152,6 +151,8 @@ namespace ShopShoesAPI.CheckoutServices
                     default: 
                         break;
                 }
+                await this.order.CheckoutAsync(userId, orderDTO, payment.Id.ToString());
+
 
                 return new ResultPaymentLinksDto
                 {
