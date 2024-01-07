@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ShopShoesAPI.comment;
 using ShopShoesAPI.order;
 
 namespace ShopShoesAPI.user
@@ -9,5 +10,6 @@ namespace ShopShoesAPI.user
         public string Address { get; set; } = null!;
         public bool Deleted { get; set; } = false;
         public ICollection<OrderEntity> Orders { get; set; }
+        public ICollection<CommentEntity> Comments { get; set; }
     }
 }

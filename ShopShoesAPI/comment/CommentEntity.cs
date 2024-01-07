@@ -15,7 +15,11 @@ namespace ShopShoesAPI.comment
         public string Content { get; set; } = null!;
 
         public int ProductId { get; set; }
+        public string UserId { get; set; }
         public ProductEntity Product { get; set; }
+
+        public UserEnityIndetity User {  get; set; }
+
 
     }
 }

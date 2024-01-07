@@ -70,6 +70,12 @@ namespace ShopShoesAPI.Data
                 .WithMany(o => o.OrderDetails)
                 .HasForeignKey(od => od.ProductId);
 
+            // User -> comments One to many
+            modelBuilder.Entity<CommentEntity>()
+                .HasOne(cm => cm.User)
+                .WithMany(o => o.Comments)
+                .HasForeignKey(cm => cm.UserId);
+
             // User -> Order One to many
             modelBuilder.Entity<OrderEntity>()
                 .HasOne(o => o.User)

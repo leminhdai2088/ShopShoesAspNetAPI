@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShopShoesAPI.auth;
+using ShopShoesAPI.Enums;
 using ShopShoesAPI.product;
+using ShopShoesAPI.user;
+using StackExchange.Redis;
 using System.Threading.Tasks;
 
 namespace ShopShoesAPI.comment
@@ -10,9 +15,20 @@ namespace ShopShoesAPI.comment
     public class CommentController : ControllerBase
     {
         private readonly IComment iComment;
-        public CommentController(IComment iComment)
+        private readonly PayloadTokenDTO payloadTokenDTO;
+        private readonly string userId;
+        private readonly IAuth _iAuth;
+        public CommentController(IComment iComment, IHttpContextAccessor httpContextAccessor, IAuth _iAuth)
         {
             this.iComment = iComment;
+            this._iAuth = _iAuth;
+            string authorizationHeader = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
+            if (authorizationHeader != null)
+            {
+                payloadTokenDTO = _iAuth.VerifyAccessToken(authorizationHeader!);
+                userId = payloadTokenDTO?.Id;
+            }
+
         }
         [HttpGet("Product/{productId}")]
         public async Task<ActionResult> GetAllCommentsForProduct(int productId)
@@ -30,11 +46,12 @@ namespace ShopShoesAPI.comment
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult> CreateComment([FromBody] CommentDTO comment)
         {
             try
             {
-                var result = await this.iComment.CreateComment(comment);
+                var result = await this.iComment.CreateComment(comment, userId);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -43,17 +60,19 @@ namespace ShopShoesAPI.comment
             }
         }
 
-        [HttpPost("/delete/{commentId}")]
+
+        [HttpDelete("/delete/{commentId}")]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult> DeleteComment([FromRoute] int commentId)
         {
             try
             {
-                var result = await this.iComment.DeleteComment(commentId);
+                var result = await this.iComment.DeleteComment(commentId, userId);
                 if (result)
                 {
-                    return Ok("Product deleted successfully");
+                    return Ok("Comment deleted successfully");
                 }
-                return NotFound("Product not found");
+                return NotFound("Comment not found");
             }
             catch (Exception ex)
             {
@@ -62,11 +81,12 @@ namespace ShopShoesAPI.comment
         }
 
         [HttpPut("UpdateComment/{commentId}")]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult> EditComment([FromRoute] int commentId, [FromBody] CommentDTO comment)
         {
             try
             {
-                var result = await this.iComment.EditComment(commentId, comment);
+                var result = await this.iComment.EditComment(commentId, comment, userId);
                 if (result)
                 {
                     return Ok("Comment has edited successfully");

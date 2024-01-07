@@ -17,17 +17,21 @@ namespace ShopShoesAPI.comment
             this._context = context;
             this._appSettings = optionsMonitor.CurrentValue;
         }
-        public async Task<List<CommentDTO>> GetAllCommentsForProduct(int productId)
+        public async Task<IEnumerable<object>> GetAllCommentsForProduct(int productId)
         {
             try
             {
                 var comments = await this._context.CommentEntities
                     .Where(c => c.ProductId == productId)
-                    .Select(c => new CommentDTO
+                    .Include(c => c.User)
+                    .Select(c => new
                     {
-                        Rating = c.Rating,
-                        Content = c.Content,
-                        ProductId = productId
+                         c.Rating,
+                         c.Content,
+                         c.ProductId,
+                         c.UserId,
+                         c.User.FullName,
+                         c.User.Email
                     }).ToListAsync();
                 return comments; // Product updated successfully
             }
@@ -37,7 +41,7 @@ namespace ShopShoesAPI.comment
             }
         }
 
-        public async Task<string> CreateComment(CommentDTO comment)
+        public async Task<string> CreateComment(CommentDTO comment, string userId)
         {
             try
             {
@@ -47,6 +51,7 @@ namespace ShopShoesAPI.comment
                     Content = comment.Content,
                     ProductId = comment.ProductId,
                 };
+                newComment.UserId = userId;
 
                 this._context.Add(newComment);
                 await this._context.SaveChangesAsync();
@@ -59,12 +64,12 @@ namespace ShopShoesAPI.comment
             }
         }
 
-        public async Task<bool> DeleteComment(int commentId)
+        public async Task<bool> DeleteComment(int commentId, string userId)
         {
             try
             {
                 var comment = await this._context.CommentEntities.FindAsync(commentId);
-                if (comment == null)
+                if (comment == null || comment.UserId != userId)
                 {
                     return false;
                 }
@@ -79,19 +84,19 @@ namespace ShopShoesAPI.comment
             }
         }
 
-        public async Task<bool> EditComment(int commentId, CommentDTO comment)
+        public async Task<bool> EditComment(int commentId, CommentDTO comment, string userId)
         {
             try
             {
                 var existingComment = await this._context.CommentEntities.FindAsync(commentId);
-                if (existingComment == null)
+                if (existingComment == null || existingComment.UserId != userId)
                 {
                     return false;
                 }
 
                 existingComment.Rating = comment.Rating;
                 existingComment.Content = comment.Content;
-
+                this._context.CommentEntities.Update(existingComment);
                 await _context.SaveChangesAsync();
                 return true; 
             }
