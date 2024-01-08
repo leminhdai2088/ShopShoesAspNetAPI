@@ -33,16 +33,16 @@ namespace ShopShoesAPI.cart
         }
 
         [HttpPost("add")]
-        public IActionResult AddToCart(CartDTO newItem)
+        public async Task<IActionResult> AddToCart(CartDTO newItem)
         {
-            var result = _cartService.AddToCart(newItem);
+            var result = await _cartService.AddToCart(newItem);
             return Ok(result);
         }
 
         [HttpPost("add-one")]
-        public IActionResult AddOneItemToCart(int productId)
+        public async Task<IActionResult> AddOneItemToCart(int productId)
         {
-            var result = _cartService.AddOneItemToCart(productId);
+            var result = await _cartService.AddOneItemToCart(productId);
             return Ok(result);
         }
 

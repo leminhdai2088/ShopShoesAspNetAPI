@@ -238,7 +238,7 @@ namespace ShopShoesAPI.user
                 {
                     throw new Exception("Product is not found");
                 }
-                if (qty > product.Quantity)
+                if (qty > product.Quantity || qty < 0)
                     return false;
                 return true;
             }

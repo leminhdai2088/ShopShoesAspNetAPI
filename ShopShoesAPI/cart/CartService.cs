@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShopShoesAPI.Data;
 using ShopShoesAPI.order;
+using ShopShoesAPI.product;
 using ShopShoesAPI.user;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,14 +12,16 @@ namespace ShopShoesAPI.cart
     public class CartService : ICart
     {
         private readonly MyDbContext _context;
+        private readonly IProduct product;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly UserManager<UserEnityIndetity> userManager;
         public CartService(MyDbContext context, UserManager<UserEnityIndetity> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IProduct product)
         {
             this._context = context;
             this.userManager = userManager;
             this.httpContextAccessor = httpContextAccessor;
+            this.product = product;
         }
         public List<CartDTO> GetCartItems()
         {
@@ -39,7 +42,7 @@ namespace ShopShoesAPI.cart
             }
         }
 
-        public bool AddOneItemToCart(int productId)
+        public async Task<bool> AddOneItemToCart(int productId)
         {
             try
             {
@@ -51,6 +54,11 @@ namespace ShopShoesAPI.cart
                 var existingItem = cartItems.FirstOrDefault(item => item.ProductId == productId);
                 if (existingItem != null)
                 {
+                    bool isValidQty = await this.product.IsValidBuyQty(productId, existingItem.Quantity + 1);
+                    if (!isValidQty)
+                    {
+                        return isValidQty;
+                    }
                     existingItem.Quantity += 1;
                 }
                 else
@@ -97,10 +105,15 @@ namespace ShopShoesAPI.cart
             }
         }
 
-        public bool AddToCart(CartDTO item)
+        public async Task<bool> AddToCart(CartDTO item)
         {
             try
             {
+                bool isValidQty = await this.product.IsValidBuyQty(item.ProductId, item.Quantity);
+                if (!isValidQty)
+                {
+                    return isValidQty;
+                }
                 var cart = this.httpContextAccessor?.HttpContext?.Session.GetString("Cart");
 
                 // Parse chuỗi json cart thành kiểu list cartDto
