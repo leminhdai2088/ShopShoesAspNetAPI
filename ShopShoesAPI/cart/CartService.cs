@@ -84,7 +84,8 @@ namespace ShopShoesAPI.cart
                 {
                     existingItem.Quantity -= 1;
 
-                    if(existingItem.Quantity <= 0) RemoveFromCart(productId);    
+                    if(existingItem.Quantity <= 0) RemoveFromCart(productId);
+                    return true;
                 }
 
                 this.httpContextAccessor?.HttpContext?.Session.SetString("Cart", JsonSerializer.Serialize(cartItems));
@@ -105,7 +106,7 @@ namespace ShopShoesAPI.cart
                 // Parse chuỗi json cart thành kiểu list cartDto
                 var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart) : new List<CartDTO>();
 
-                var existingItem = cartItems.FirstOrDefault(item => item.ProductId == item.ProductId);
+                var existingItem = cartItems.FirstOrDefault(c => c.ProductId == item.ProductId);
                 if (existingItem != null)
                 {
                     existingItem.Quantity = item.Quantity;
