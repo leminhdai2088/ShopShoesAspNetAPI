@@ -41,6 +41,7 @@ namespace ShopShoesAPI.order
                 // Tạo đơn đặt hàng
                 var order = new OrderEntity
                 {
+
                     UserId = userId,
                     Phone = orderDTO.Phone ?? user.PhoneNumber ?? string.Empty,
                     Address = orderDTO.Address ?? user.Address ?? string.Empty,

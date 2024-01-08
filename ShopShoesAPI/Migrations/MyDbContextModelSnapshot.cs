@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8fd2f069-93da-4e81-b21d-215f9a0d28c7",
+                            Id = "6b48d6c3-06f0-4074-9893-832d95bff52c",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "60a0c50a-8cf8-4331-8d23-a0c10a3e4c00",
+                            Id = "0a2915c5-ae99-4677-bb59-48ca40b1866a",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -457,9 +457,15 @@ namespace ShopShoesAPI.Migrations
                     b.Property<float>("Rating")
                         .HasColumnType("real");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -827,7 +833,15 @@ namespace ShopShoesAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ShopShoesAPI.user.UserEnityIndetity", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ShopShoesAPI.order.OrderDetailEntity", b =>
@@ -911,6 +925,8 @@ namespace ShopShoesAPI.Migrations
 
             modelBuilder.Entity("ShopShoesAPI.user.UserEnityIndetity", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
