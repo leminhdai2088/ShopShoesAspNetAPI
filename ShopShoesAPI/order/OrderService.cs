@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Payment.Domain.Entities;
 using ShopShoesAPI.cart;
 using ShopShoesAPI.Data;
 using ShopShoesAPI.Enums;
@@ -32,18 +33,13 @@ namespace ShopShoesAPI.order
                     throw new Exception("Don't have item in the cart");
                 }
 
-                var user = await this.userManager.FindByIdAsync(userId);
-                if (user == null)
-                {
-                    throw new Exception("User is not found");
-                }
 
                 // Tạo đơn đặt hàng
                 var order = new OrderEntity
                 {
                     UserId = userId,
-                    Phone = orderDTO.Phone ?? user.PhoneNumber ?? string.Empty,
-                    Address = orderDTO.Address ?? user.Address ?? string.Empty,
+                    Phone = orderDTO.Phone ?? string.Empty,
+                    Address = orderDTO.Address ?? string.Empty,
                     Note = orderDTO.Note ?? string.Empty,
                     PayMethod = orderDTO.payMethod,
                     Total = this.iCart.CalculateTotal(),
@@ -79,6 +75,44 @@ namespace ShopShoesAPI.order
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public IEnumerable<object> GetOrderByUserId(string userId)
+        {
+            try
+            {
+                var orders = from order in this.context.OrderEntities
+                             join payment in this.context.PaymentEntities on order.PaymentId equals payment.Id.ToString()
+                             join des in this.context.PaymentDesEntities on payment.PaymentDesId equals des.Id
+                             orderby order.Id
+                             select new
+                             {
+                                 Order = order,
+                                 PaymentMessage = payment.PaymentLastMessage,
+                                 PaymentContent = payment.PaymentContent,
+                                 PaymentDes = des.DesShortName
+                             };
+                return orders;
+                             
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public IEnumerable<object> GetOrderDetails(int orderId)
+        {
+            var orderDetails = from orderDetail in this.context.OrderDetailEntities
+                               join order in this.context.OrderEntities on orderDetail.OrderId equals order.Id
+                               join prod in this.context.ProductEntities on orderDetail.ProductId equals prod.Id
+                               orderby orderDetail.ProductId
+                               select new
+                               {
+                                   orderDetail = orderDetail,
+                                   Product = prod,
+                               };
+            return orderDetails;
         }
 
         public async Task<bool> HandleStatus(ChangeStatusDto changeStatus)

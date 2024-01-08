@@ -81,7 +81,7 @@ namespace ShopShoesAPI.OnlineCheckout
         {
             string returnUrl = string.Empty;
             var reuturnModel = new PaymentReturnDto();
-            var processResult = await this.payment.ProcessMomoPaymentReturn(response);
+            var processResult = await this.payment.ProcessMomoPaymentReturn(userId,response);
 
             if (!processResult.Item2.IsNullOrEmpty())
             {

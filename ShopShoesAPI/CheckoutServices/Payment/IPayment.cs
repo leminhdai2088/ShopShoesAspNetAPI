@@ -12,7 +12,7 @@ namespace ShopShoesAPI.CheckoutServices
         public Task<PaymentEntity> FindById(int id);
         public Task<(PaymentReturnDto, string)> ProcessVnpayPaymentReturn(string userId, VnpayResponse request);
         public Task<VnpayPayIpnResponse> ProcessVnpayPaymentIpn(VnpayResponse request);
-        public Task<(PaymentReturnDto, string)> ProcessMomoPaymentReturn(MomoOneTimePaymentResultRequest request);
+        public Task<(PaymentReturnDto, string)> ProcessMomoPaymentReturn(string userId, MomoOneTimePaymentResultRequest request);
 
     }
 }

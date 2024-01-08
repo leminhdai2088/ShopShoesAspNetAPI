@@ -37,6 +37,26 @@ namespace ShopShoesAPI.order
                 Metadata = await this.iOrder.CheckoutAsync(userId, orderDTO, null)
             };
         }
+
+        [HttpPost("get")]
+        public ApiRespone GetOrdersByUserId([FromBody] string userId)
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = this.iOrder.GetOrderByUserId(userId)
+            };
+        }
+        [HttpPost("get-orderDetail")]
+
+        public ApiRespone GetOrderDetails([FromBody] int orderId)
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = this.iOrder.GetOrderDetails(orderId)
+            };
+        }
     }
 
 }

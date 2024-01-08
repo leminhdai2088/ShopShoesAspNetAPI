@@ -26,6 +26,7 @@ namespace ShopShoesAPI.comment
                     .Include(c => c.User)
                     .Select(c => new
                     {
+                         c.Id,
                          c.Rating,
                          c.Content,
                          c.ProductId,

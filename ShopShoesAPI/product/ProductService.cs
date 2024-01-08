@@ -115,6 +115,7 @@ namespace ShopShoesAPI.user
                     .Where(p => p.Name.Contains(searchString) || p.Description.Contains(searchString))
                     .Select(p => new ProductDTO
                     {
+                        Id = p.Id,
                         Name = p.Name,
                         Description = p.Description,
                         Price = p.Price,

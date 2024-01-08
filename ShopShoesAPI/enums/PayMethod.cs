@@ -2,9 +2,7 @@
 {
     public enum PayMethod
     {
-        Cash,
-        VNPay,
-        Momo = 3,
-        ZaloPay
+        Cash, // 0
+        Online // 1
     }
 }

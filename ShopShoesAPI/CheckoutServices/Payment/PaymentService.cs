@@ -68,15 +68,18 @@ namespace ShopShoesAPI.CheckoutServices
             try
             {
                 await transaction.BeginTransactionAsync();
-                var orderDTO = new OrderDTO
+
+                if (paymentDto.payMethod == PayMethod.Cash)
                 {
-                    Phone = paymentDto.Phone,
-                    Address = paymentDto.Address,
-                    Note = paymentDto.Note,
-                    payMethod = paymentDto.payMethod
-                };
-                if (paymentDto.payMethod == PayMethod.Cash || paymentDto.PaymentDesId == 0)
-                {
+                    var orderDTO = new OrderDTO
+                    {
+                        Phone = paymentDto.Phone,
+                        Address = paymentDto.Address,
+                        Note = paymentDto.Note,
+                        payMethod = paymentDto.payMethod,
+                        status = OrderStatusEnum.Pending,
+                        
+                    };
                     var result = await this.order.CheckoutAsync(userId, orderDTO, null);
                     await transaction.CommitTransactionAsync();
                     await transaction.CloseConnectionAsync();
@@ -151,7 +154,7 @@ namespace ShopShoesAPI.CheckoutServices
                     default: 
                         break;
                 }
-                await this.order.CheckoutAsync(userId, orderDTO, payment.Id.ToString());
+                // await this.order.CheckoutAsync(userId, orderDTO, payment.Id.ToString());
 
 
                 return new ResultPaymentLinksDto
@@ -204,7 +207,7 @@ namespace ShopShoesAPI.CheckoutServices
                         if (payment != null)
                         {
                             payment.PaymentStatus = "00";
-
+                            payment.PaymentLastMessage = "Đã thanh toán đủ";
                             var merchant = await this.merchant.FindById(payment.MerchantId);
 
                             returnUrl = merchant?.MerchantReturnUrl ?? string.Empty;
@@ -220,7 +223,7 @@ namespace ShopShoesAPI.CheckoutServices
                                 Phone = Sphone,
                                 Note = Snote,
                                 payMethod = SpayMethod,
-                                status = OrderStatusEnum.Completed
+                                status = OrderStatusEnum.Pending
                             };
                             var savedOrder = await this.order.CheckoutAsync(userId, orderDTO, payment.Id.ToString());
                         }
@@ -338,7 +341,7 @@ namespace ShopShoesAPI.CheckoutServices
             return resultData;
         }
 
-        public async Task<(PaymentReturnDto, string)> ProcessMomoPaymentReturn(MomoOneTimePaymentResultRequest request)
+        public async Task<(PaymentReturnDto, string)> ProcessMomoPaymentReturn(string userId,MomoOneTimePaymentResultRequest request)
         {
             string returnUrl = string.Empty;
             var resultData = new PaymentReturnDto();
@@ -361,9 +364,20 @@ namespace ShopShoesAPI.CheckoutServices
                         {
                             resultData.PaymentStatus = "00";
                             payment.PaymentStatus = "00";
+                            payment.PaymentLastMessage = "Đã thanh toán đủ";
                             resultData.PaymentId = payment.Id;
                             resultData.Signature = Guid.NewGuid().ToString();
                             resultData.PaymentMessage = "Success";
+                            var orderDTO = new OrderDTO
+                            {
+                                Address = Saddress,
+                                Phone = Sphone,
+                                Note = Snote,
+                                payMethod = SpayMethod,
+                                status = OrderStatusEnum.Pending
+                            };
+                            var result = await this.order.CheckoutAsync(userId, orderDTO, payment.Id.ToString());
+
                         }
                         else
                         {
