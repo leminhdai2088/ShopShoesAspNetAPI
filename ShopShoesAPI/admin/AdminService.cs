@@ -207,12 +207,45 @@ namespace ShopShoesAPI.admin
         {
             try
             {
-                var orders = await this.context.OrderEntities
-                    .OrderByDescending(e => e.createdAt)
-                    .Take(5)
-                    .ToArrayAsync();
-                return orders;
-            }catch(Exception ex)
+                var orders = from order in this.context.OrderEntities
+                             join payment in this.context.PaymentEntities on order.PaymentId equals payment.Id.ToString()
+                             join des in this.context.PaymentDesEntities on payment.PaymentDesId equals des.Id
+                             join user in this.userManager.Users on order.UserId equals user.Id
+                             orderby order.Id descending
+                             select new
+                             {
+                                 order =  new
+                                 {
+                                     order.Id,
+                                     order.Total,
+                                     order.Phone,
+                                     order.Address,
+                                     order.PaymentId,
+                                     order.Status
+                                 },
+                                 payment = new
+                                 {
+                                     payment.Id,
+                                     payment.PaymentLastMessage,
+                                    
+                                 },
+                                 des = new
+                                 {
+                                     des.Id,
+                                     des.DesShortName
+                                 },
+                                 user = new
+                                 {
+                                     user.Id,
+                                     user.FullName,
+                                     user.Email,
+                                     user.PhoneNumber
+                                 }
+                             };
+                var top5 = await orders.Take(5).ToArrayAsync();
+                return top5;
+            }
+            catch(Exception ex)
             {
                 throw new Exception(ex.Message);
             }

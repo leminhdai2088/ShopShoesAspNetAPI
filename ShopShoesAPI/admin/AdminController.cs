@@ -120,5 +120,15 @@ namespace ShopShoesAPI.admin
             };
         }
 
+        [HttpPost("get-orderDetail/{orderId}")]
+        public ApiRespone GetOrderDetails([FromRoute] int orderId)
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = this.iOrder.GetOrderDetails(orderId)
+            };
+        }
+
     }
 }
