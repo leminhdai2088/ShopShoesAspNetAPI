@@ -258,5 +258,61 @@ namespace ShopShoesAPI.admin
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<object[]> GetAllOrders()
+        {
+            try
+            {
+                var orders = from order in this.context.OrderEntities
+                             join payment in this.context.PaymentEntities on order.PaymentId equals payment.Id.ToString() into paymentGroup
+                             from payment in paymentGroup.DefaultIfEmpty()
+                             join des in this.context.PaymentDesEntities on payment.PaymentDesId equals des.Id into desGroup
+                             from des in desGroup.DefaultIfEmpty()
+                             join user in this.userManager.Users on order.UserId equals user.Id into userGroup
+                             from user in userGroup.DefaultIfEmpty()
+                             orderby order.Id descending
+                             select new
+                             {
+                                 order = new
+                                 {
+                                     order.Id,
+                                     order.Total,
+                                     order.Phone,
+                                     order.Address,
+                                     order.PaymentId,
+                                     order.Status
+                                 },
+                                 payment = payment != null
+                                     ? new
+                                     {
+                                         payment.Id,
+                                         payment.PaymentLastMessage
+                                     }
+                                     : null,
+                                 des = des != null
+                                     ? new
+                                     {
+                                         des.Id,
+                                         des.DesShortName
+                                     }
+                                     : null,
+                                 user = user != null
+                                     ? new
+                                     {
+                                         user.Id,
+                                         user.FullName,
+                                         user.Email,
+                                         user.PhoneNumber
+                                     }
+                                     : null
+                             };
+
+                return await orders.ToArrayAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

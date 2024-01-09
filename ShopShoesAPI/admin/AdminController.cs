@@ -130,5 +130,15 @@ namespace ShopShoesAPI.admin
             };
         }
 
+        [HttpPost("get-all-order")]
+        public ApiRespone GetAllOrder()
+        {
+            return new ApiRespone
+            {
+                Status = (int)HttpStatusCode.OK,
+                Metadata = this.iAdmin.GetAllOrders()
+            };
+        }
+
     }
 }

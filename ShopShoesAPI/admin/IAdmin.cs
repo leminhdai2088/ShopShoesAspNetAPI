@@ -20,5 +20,7 @@ namespace ShopShoesAPI.admin
         public Task<int> CalculateTotalOrder();
         public Task<int> CalculateTotalProduct();
         public Task<object[]> CalculateTotalNewOrder();
+
+        public Task<object[]> GetAllOrders();
     }
 }
