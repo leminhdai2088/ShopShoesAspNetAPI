@@ -27,19 +27,8 @@ namespace ShopShoesAPI.order
             userId = payloadTokenDTO?.Id;
         }
 
-        [HttpPost]
-        public async Task<ApiRespone> Checkout([FromBody] OrderDTO orderDTO)
-        {
-            return new ApiRespone
-            {
-                Status = (int)HttpStatusCode.Created,
-                Message = "Checkout successfully",
-                Metadata = await this.iOrder.CheckoutAsync(userId, orderDTO, null)
-            };
-        }
-
         [HttpPost("get")]
-        public ApiRespone GetOrdersByUserId([FromBody] string userId)
+        public ApiRespone GetOrdersByUserId()
         {
             return new ApiRespone
             {
@@ -47,9 +36,9 @@ namespace ShopShoesAPI.order
                 Metadata = this.iOrder.GetOrderByUserId(userId)
             };
         }
-        [HttpPost("get-orderDetail")]
-
-        public ApiRespone GetOrderDetails([FromBody] int orderId)
+         
+        [HttpPost("get-orderDetail/{orderId}")]
+        public ApiRespone GetOrderDetails([FromRoute] int orderId)   
         {
             return new ApiRespone
             {

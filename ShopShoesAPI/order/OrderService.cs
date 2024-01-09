@@ -6,6 +6,8 @@ using ShopShoesAPI.Data;
 using ShopShoesAPI.Enums;
 using ShopShoesAPI.product;
 using ShopShoesAPI.user;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace ShopShoesAPI.order
 {
@@ -104,15 +106,23 @@ namespace ShopShoesAPI.order
         public IEnumerable<object> GetOrderDetails(int orderId)
         {
             var orderDetails = from orderDetail in this.context.OrderDetailEntities
-                               join order in this.context.OrderEntities on orderDetail.OrderId equals order.Id
                                join prod in this.context.ProductEntities on orderDetail.ProductId equals prod.Id
+                               where orderDetail.OrderId == orderId
                                orderby orderDetail.ProductId
                                select new
                                {
-                                   orderDetail = orderDetail,
-                                   Product = prod,
+                                   OrderDetail = new
+                                   {
+                                       quantity  = orderDetail.Quantity,
+                                       total = orderDetail.Total,
+                                   },
+                                   Product = new
+                                   {
+                                       name = prod.Name,
+                                       price = prod.Price
+                                   }
                                };
-            return orderDetails;
+            return orderDetails.ToList(); // Materialize the query and then serialize
         }
 
         public async Task<bool> HandleStatus(ChangeStatusDto changeStatus)
