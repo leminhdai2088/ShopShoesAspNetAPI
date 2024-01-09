@@ -208,13 +208,16 @@ namespace ShopShoesAPI.admin
             try
             {
                 var orders = from order in this.context.OrderEntities
-                             join payment in this.context.PaymentEntities on order.PaymentId equals payment.Id.ToString()
-                             join des in this.context.PaymentDesEntities on payment.PaymentDesId equals des.Id
-                             join user in this.userManager.Users on order.UserId equals user.Id
+                             join payment in this.context.PaymentEntities on order.PaymentId equals payment.Id.ToString() into paymentGroup
+                             from payment in paymentGroup.DefaultIfEmpty()
+                             join des in this.context.PaymentDesEntities on payment.PaymentDesId equals des.Id into desGroup
+                             from des in desGroup.DefaultIfEmpty()
+                             join user in this.userManager.Users on order.UserId equals user.Id into userGroup
+                             from user in userGroup.DefaultIfEmpty()
                              orderby order.Id descending
                              select new
                              {
-                                 order =  new
+                                 order = new
                                  {
                                      order.Id,
                                      order.Total,
@@ -223,24 +226,29 @@ namespace ShopShoesAPI.admin
                                      order.PaymentId,
                                      order.Status
                                  },
-                                 payment = new
-                                 {
-                                     payment.Id,
-                                     payment.PaymentLastMessage,
-                                    
-                                 },
-                                 des = new
-                                 {
-                                     des.Id,
-                                     des.DesShortName
-                                 },
-                                 user = new
-                                 {
-                                     user.Id,
-                                     user.FullName,
-                                     user.Email,
-                                     user.PhoneNumber
-                                 }
+                                 payment = payment != null
+                                     ? new
+                                     {
+                                         payment.Id,
+                                         payment.PaymentLastMessage
+                                     }
+                                     : null,
+                                 des = des != null
+                                     ? new
+                                     {
+                                         des.Id,
+                                         des.DesShortName
+                                     }
+                                     : null,
+                                 user = user != null
+                                     ? new
+                                     {
+                                         user.Id,
+                                         user.FullName,
+                                         user.Email,
+                                         user.PhoneNumber
+                                     }
+                                     : null
                              };
                 var top5 = await orders.Take(5).ToArrayAsync();
                 return top5;
