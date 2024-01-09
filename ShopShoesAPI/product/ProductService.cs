@@ -35,6 +35,7 @@ namespace ShopShoesAPI.user
                 var query = _context.ProductEntities
                     .Select(p => new ProductDTO
                     {
+                        Id = p.Id,
                         Name = p.Name,
                         Description = p.Description,
                         Price = p.Price,
