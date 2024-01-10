@@ -58,6 +58,7 @@ namespace ShopShoesAPI.CheckoutServices
         public async Task<object> Create(string userId, CreatePaymentDto paymentDto)
         {
             decimal RequiredAmount = this.cart.CalculateTotal();
+            //decimal RequiredAmount = 20000;
             var transaction = this.context.Database;
             string? createMessage = string.Empty;
             Sphone = paymentDto.Phone ?? string.Empty;
