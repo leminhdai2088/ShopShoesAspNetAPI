@@ -116,6 +116,8 @@ namespace ShopShoesAPI.order
             var orderDetails = from orderDetail in this.context.OrderDetailEntities
                                join prod in this.context.ProductEntities on orderDetail.ProductId equals prod.Id
                                join order in this.context.OrderEntities on orderDetail.OrderId equals order.Id
+                               join cate in this.context.CategoryEntities on prod.CategoryId equals cate.Id
+                               join user in this.userManager.Users on order.UserId equals user.Id
                                where orderDetail.OrderId == orderId
                                orderby orderDetail.ProductId
                                select new
@@ -128,11 +130,25 @@ namespace ShopShoesAPI.order
                                    Product = new
                                    {
                                        name = prod.Name,
-                                       price = prod.Price
+                                       price = prod.Price,
+                                       desciption = prod.Description,
+                                       quantity = prod.Quantity,
+                                       discount = prod.Discount,
+                                       image = prod.Image,
+                                       rating = prod.Rating,
+                                       categoryId = prod.CategoryId,
+                                       categoryName = cate.Name
                                    },
-                                   order
+                                   order,
+                                   user = new
+                                   {
+                                       fullName = user.FullName,
+                                       phone = user.PhoneNumber,
+                                       address = user.Address,
+                                       email = user.Email
+                                   }
                                };
-            return orderDetails.ToList(); // Materialize the query and then serialize
+            return orderDetails.ToList();
         }
 
         public async Task<bool> HandleStatus(ChangeStatusDto changeStatus)
