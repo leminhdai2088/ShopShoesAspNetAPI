@@ -28,49 +28,35 @@ namespace ShopShoesAPI.cart
         [HttpGet]
         public IActionResult GetCartItems()
         {
-            var cartItems = _cartService.GetCartItems();
+            var cartItems = _cartService.GetCartItems(userId);
             return Ok(cartItems);
         }
 
         [HttpPost("add")]
         public async Task<IActionResult> AddToCart(CartDTO newItem)
         {
-            var result = await _cartService.AddToCart(newItem);
-            return Ok(result);
-        }
-
-        [HttpPost("add-one")]
-        public async Task<IActionResult> AddOneItemToCart(int productId)
-        {
-            var result = await _cartService.AddOneItemToCart(productId);
-            return Ok(result);
-        }
-
-        [HttpPost("minus-one")]
-        public IActionResult MinusOneItemToCart(int productId)
-        {
-            var result = _cartService.MinusOneItemToCart(productId);
+            var result = await _cartService.AddToCart(newItem, userId);
             return Ok(result);
         }
 
         [HttpPost("remove/{productId}")]
-        public IActionResult RemoveFromCart(int productId)
+        public async Task<IActionResult> RemoveFromCart(int productId)
         {
-            var result = _cartService.RemoveFromCart(productId);
+            var result = await _cartService.RemoveFromCart(productId, userId);
             return Ok(result);
         }
 
         [HttpPost("clear")]
-        public IActionResult ClearCart()
+        public async Task<IActionResult> ClearCart()
         {
-            var result =  _cartService.ClearCart();
+            var result = await _cartService.ClearCart(userId);
             return Ok(result);
         }
 
         [HttpGet("total")]
         public  IActionResult CalculateTotal()
         {
-            var total = _cartService.CalculateTotal();
+            var total = _cartService.CalculateTotal(userId);
             return Ok(total);
         }
     }

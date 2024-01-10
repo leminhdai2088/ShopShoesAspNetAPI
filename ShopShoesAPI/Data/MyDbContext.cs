@@ -122,7 +122,8 @@ namespace ShopShoesAPI.Data
             base.OnModelCreating(modelBuilder);
 
             SeedRoles(modelBuilder);
-            SeedCategories(modelBuilder);
+            SeedDes(modelBuilder);
+            SeedMerchnat(modelBuilder);
         }
 
         private static void SeedRoles(ModelBuilder modelBuilder)
@@ -132,16 +133,52 @@ namespace ShopShoesAPI.Data
                 new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "User" }
                 );
         }
-
-        private static void SeedCategories(ModelBuilder modelBuilder)
+        private static void SeedDes(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CategoryEntity>().HasData(
-                new CategoryEntity() { Id  = 1, Name = "Category 1" },
-                new CategoryEntity() { Id = 2, Name = "Category 2" },
-                new CategoryEntity() { Id = 3, Name = "Category 3" },
-                new CategoryEntity() { Id = 4, Name = "Category 4" },
-                new CategoryEntity() { Id = 5, Name = "Category 5" }
+            modelBuilder.Entity<PaymentDestinationEntity>().HasData(
+                new PaymentDestinationEntity()
+                {
+                    Id = 1,
+                    DesName = "VNPAY",
+                    DesShortName = "VNPAY",
+                    DesLogo = "VNPAY",
+                    ShortIndex = 0,
+                    IsActive = true
+                },
+                new PaymentDestinationEntity()
+                {
+                    Id = 2,
+                    DesName = "MOMO",
+                    DesShortName = "MOMO",
+                    DesLogo = "MOMO",
+                    ShortIndex = 1,
+                    IsActive = true
+                },
+                new PaymentDestinationEntity()
+                {
+                    Id = 3,
+                    DesName = "ZALOPAY",
+                    DesShortName = "ZALOPAY",
+                    DesLogo = "ZALOPAY",
+                    ShortIndex = 0,
+                    IsActive = true
+                }
                 );
+        }
+
+        private static void SeedMerchnat(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MerchantEntity>().HasData(
+                new MerchantEntity() 
+                {
+                    Id = 1,
+                    MerchantName = "123",
+                    MerchantWeblink = "ZALOPAY",
+                    MerchantIpnUrl = "ZALOPAY",
+                    MerchantReturnUrl = "ZALOPAY",
+                    SecretKey = "ZALOPAY",
+                    IsActive = true
+                });
         }
 
         public override int SaveChanges()

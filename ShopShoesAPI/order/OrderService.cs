@@ -52,7 +52,7 @@ namespace ShopShoesAPI.order
                     Address = orderDTO.Address ?? string.Empty,
                     Note = orderDTO.Note ?? string.Empty,
                     PayMethod = orderDTO.payMethod,
-                    Total = this.iCart.CalculateTotal(),
+                    Total = this.iCart.CalculateTotal(userId),
                     PaymentId = paymentId,
                     createdAt = DateTime.UtcNow
                 };
@@ -78,7 +78,7 @@ namespace ShopShoesAPI.order
                 }
                 await this.context.SaveChangesAsync();
                 // Xóa giỏ hàng sau khi đã thanh toán
-                this.iCart.ClearCart();
+                await this.iCart.ClearCart(userId);
                 return true;
             }
             catch (Exception ex)

@@ -51,14 +51,14 @@ namespace ShopShoesAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "797ee7c2-9289-4078-bd57-de7693ce534b",
+                            Id = "807cd405-27d5-47a7-bd1c-2e0a3df0dee6",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "00f7a256-531d-4d95-9918-43a6f75b28d7",
+                            Id = "6aa72f6d-ef50-48b9-8ac0-ae8078fcabca",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -212,6 +212,20 @@ namespace ShopShoesAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Merchant");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 10, 22, 17, 36, 706, DateTimeKind.Local).AddTicks(2272),
+                            CreatedBy = "",
+                            IsActive = true,
+                            MerchantIpnUrl = "ZALOPAY",
+                            MerchantName = "123",
+                            MerchantReturnUrl = "ZALOPAY",
+                            MerchantWeblink = "ZALOPAY",
+                            SecretKey = "ZALOPAY"
+                        });
                 });
 
             modelBuilder.Entity("Payment.Domain.Entities.PaymentDestinationEntity", b =>
@@ -260,6 +274,41 @@ namespace ShopShoesAPI.Migrations
                     b.HasIndex("PaymentDestinationEntitiesId");
 
                     b.ToTable("PaymentDestination");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 10, 22, 17, 36, 706, DateTimeKind.Local).AddTicks(2241),
+                            CreatedBy = "",
+                            DesLogo = "VNPAY",
+                            DesName = "VNPAY",
+                            DesShortName = "VNPAY",
+                            IsActive = true,
+                            ShortIndex = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 10, 22, 17, 36, 706, DateTimeKind.Local).AddTicks(2255),
+                            CreatedBy = "",
+                            DesLogo = "MOMO",
+                            DesName = "MOMO",
+                            DesShortName = "MOMO",
+                            IsActive = true,
+                            ShortIndex = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 10, 22, 17, 36, 706, DateTimeKind.Local).AddTicks(2256),
+                            CreatedBy = "",
+                            DesLogo = "ZALOPAY",
+                            DesName = "ZALOPAY",
+                            DesShortName = "ZALOPAY",
+                            IsActive = true,
+                            ShortIndex = 0
+                        });
                 });
 
             modelBuilder.Entity("Payment.Domain.Entities.PaymentEntity", b =>
@@ -439,6 +488,29 @@ namespace ShopShoesAPI.Migrations
                     b.ToTable("PaymentTransaction");
                 });
 
+            modelBuilder.Entity("ShopShoesAPI.cart.CartEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cart");
+                });
+
             modelBuilder.Entity("ShopShoesAPI.comment.CommentEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -556,33 +628,6 @@ namespace ShopShoesAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Category 1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Category 2"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Category 3"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Category 4"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Category 5"
-                        });
                 });
 
             modelBuilder.Entity("ShopShoesAPI.product.ProductEntity", b =>

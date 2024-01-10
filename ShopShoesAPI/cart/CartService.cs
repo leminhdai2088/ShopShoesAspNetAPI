@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Index.HPRtree;
 using ShopShoesAPI.Data;
 using ShopShoesAPI.order;
 using ShopShoesAPI.product;
 using ShopShoesAPI.user;
+using System.Collections;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -13,99 +15,31 @@ namespace ShopShoesAPI.cart
     {
         private readonly MyDbContext _context;
         private readonly IProduct product;
-        private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly UserManager<UserEnityIndetity> userManager;
-        public CartService(MyDbContext context, UserManager<UserEnityIndetity> userManager,
-            IHttpContextAccessor httpContextAccessor, IProduct product)
+        public CartService(MyDbContext context, IProduct product)
         {
             this._context = context;
-            this.userManager = userManager;
-            this.httpContextAccessor = httpContextAccessor;
             this.product = product;
         }
-        public List<CartDTO> GetCartItems()
+        public IEnumerable<object> GetCartItems(string userId)
         {
             try
             {
-                var cart = this.httpContextAccessor?.HttpContext?.Session.GetString("Cart");
-                var options = new JsonSerializerOptions
-                {
-                    // Các tùy chọn
-                    ReferenceHandler = ReferenceHandler.Preserve,
-                    
-                };
-                var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart, options) : null;
-                return cartItems;
+                var res = from cart in this._context.CartEntities
+                          join product in this._context.ProductEntities on cart.ProductId equals product.Id
+                          where cart.UserId == userId
+                          select new
+                          {
+                                  cart,
+                                  product
+                          };
+                return res;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
 
-        public async Task<bool> AddOneItemToCart(int productId)
-        {
-            try
-            {
-                var cart = this.httpContextAccessor?.HttpContext?.Session.GetString("Cart");
-
-                // Parse chuỗi json cart thành kiểu list cartDto
-                var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart) : new List<CartDTO>();
-
-                var existingItem = cartItems.FirstOrDefault(item => item.ProductId == productId);
-                if (existingItem != null)
-                {
-                    bool isValidQty = await this.product.IsValidBuyQty(productId, existingItem.Quantity + 1);
-                    if (!isValidQty)
-                    {
-                        return isValidQty;
-                    }
-                    existingItem.Quantity += 1;
-                }
-                else
-                {
-                    var newItem = new CartDTO { 
-                        ProductId = productId,
-                        Quantity = 1,
-                    };
-                    cartItems.Add(newItem);
-                }
-
-                this.httpContextAccessor?.HttpContext?.Session.SetString("Cart", JsonSerializer.Serialize(cartItems));
-                return true;
-            }catch(Exception ex) 
-            {
-                throw new Exception(ex.Message); 
-            }
-        }
-
-        public bool MinusOneItemToCart(int productId)
-        {
-            try
-            {
-                var cart = this.httpContextAccessor?.HttpContext?.Session.GetString("Cart");
-
-                // Parse chuỗi json cart thành kiểu list cartDto
-                var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart) : new List<CartDTO>();
-
-                var existingItem = cartItems.FirstOrDefault(item => item.ProductId == productId);
-                if (existingItem != null)
-                {
-                    existingItem.Quantity -= 1;
-
-                    if(existingItem.Quantity <= 0) RemoveFromCart(productId);
-                    return true;
-                }
-
-                this.httpContextAccessor?.HttpContext?.Session.SetString("Cart", JsonSerializer.Serialize(cartItems));
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<bool> AddToCart(CartDTO item)
+        public async Task<bool> AddToCart(CartDTO item, string userId)
         {
             try
             {
@@ -114,88 +48,81 @@ namespace ShopShoesAPI.cart
                 {
                     return isValidQty;
                 }
-                var cart = this.httpContextAccessor?.HttpContext?.Session.GetString("Cart");
-
-                // Parse chuỗi json cart thành kiểu list cartDto
-                var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart) : new List<CartDTO>();
-
-                var existingItem = cartItems.FirstOrDefault(c => c.ProductId == item.ProductId);
-                if (existingItem != null)
+                var cart = this._context.CartEntities
+                    .FirstOrDefault(e => (e.ProductId == item.ProductId && e.UserId == userId));
+                if (cart != null)
                 {
-                    existingItem.Quantity = item.Quantity;
+                    cart.Qty = item.Quantity;
+                    this._context.CartEntities.Update(cart);
                 }
                 else
                 {
-                    var newItem = new CartDTO
+                    var newItem = new CartEntity
                     {
                         ProductId = item.ProductId,
-                        Quantity = item.Quantity,
+                        Qty = item.Quantity,
+                        UserId = userId
                     };
-                    cartItems.Add(newItem);
+                    this._context.CartEntities.Add(newItem);
                 }
-
-                this.httpContextAccessor?.HttpContext?.Session.SetString("Cart", JsonSerializer.Serialize(cartItems));
+                await this._context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+               return false;
             }
         }
 
-        public bool RemoveFromCart(int productId)
+        public async Task<bool> RemoveFromCart(int productId, string userId)
         {
             try
             {
-                var cart = this.httpContextAccessor?.HttpContext?.Session.GetString("Cart");
-                var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart) : null;
-                if (cartItems == null)
+                var cart = this._context.CartEntities
+                    .FirstOrDefault(e => (e.ProductId == productId && e.UserId == userId));
+                if (cart == null)
                 {
                     return false;
                 }
-                var itemToRemove = cartItems.FirstOrDefault(item => item.ProductId == productId);
-                if (itemToRemove != null)
-                {
-                    cartItems.Remove(itemToRemove);
-                    this.httpContextAccessor?.HttpContext?.Session.SetString("Cart", JsonSerializer.Serialize(cartItems));
-                    return true;
-                }
-                return false;
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public bool ClearCart()
-        {
-            try
-            {
-                this.httpContextAccessor?.HttpContext?.Session.Remove("Cart");
+                this._context.CartEntities.Remove(cart);
+                await this._context.SaveChangesAsync();
                 return true;
             }catch(Exception ex)
             {
-                throw new Exception(ex.Message);
+                return false;
             }
         }
 
-        public decimal CalculateTotal()
+        public async Task<bool> ClearCart(string userId)
         {
             try
             {
-                var cart = this.httpContextAccessor?.HttpContext?.Session.GetString("Cart");
-                var cartItems = cart != null ? JsonSerializer.Deserialize<List<CartDTO>>(cart) : new List<CartDTO>();
-
-                // decimal total = (decimal)cartItems.Sum(item => item.Price * item.Quantity);
-                var tasks = cartItems.Select(item =>
+                var cart = this._context.CartEntities.Where(e => e.UserId == userId);
+                if(cart == null) return false;
+                foreach(CartEntity item in cart)
                 {
-                    var product = this._context.ProductEntities
-                        .FirstOrDefault(e => e.Id == item.ProductId);
-                    return product.Price * item.Quantity;
-                });
+                    this._context.CartEntities.Remove(item);
+                }
+                await this._context.SaveChangesAsync();
+                return true;
+            }catch(Exception ex)
+            {
+                return false;
+            }
+        }
 
-                // Wait for all tasks to complete and then sum the results
-                decimal total = (decimal)tasks.Sum();
+        public decimal CalculateTotal(string userId)
+        {
+            try
+            {
+                var cart = this._context.CartEntities
+                     .Where(e => e.UserId == userId);
+                decimal total = 0;
+                foreach(CartEntity item in cart)
+                {
+                    var product = this._context.ProductEntities.FirstOrDefault(e => e.Id == item.ProductId);
+                    total += (decimal)product!.Price * item.Qty;
+                }
                 return total;
             }
             catch(Exception ex)

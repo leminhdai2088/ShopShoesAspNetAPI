@@ -16,7 +16,7 @@ namespace ShopShoesAPI.product
         [Required, StringLength(100)]
         public string Name { get; set; }
 
-        [AllowNull, StringLength(200)]
+        [AllowNull]
         public string Description { get; set; } = null!;
 
         [Range(0, float.MaxValue), Required]
