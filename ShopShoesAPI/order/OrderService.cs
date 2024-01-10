@@ -115,6 +115,7 @@ namespace ShopShoesAPI.order
         {
             var orderDetails = from orderDetail in this.context.OrderDetailEntities
                                join prod in this.context.ProductEntities on orderDetail.ProductId equals prod.Id
+                               join order in this.context.OrderEntities on orderDetail.OrderId equals order.Id
                                where orderDetail.OrderId == orderId
                                orderby orderDetail.ProductId
                                select new
@@ -128,7 +129,8 @@ namespace ShopShoesAPI.order
                                    {
                                        name = prod.Name,
                                        price = prod.Price
-                                   }
+                                   },
+                                   order
                                };
             return orderDetails.ToList(); // Materialize the query and then serialize
         }
