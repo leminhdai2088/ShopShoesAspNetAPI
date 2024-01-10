@@ -29,7 +29,7 @@ namespace ShopShoesAPI.OnlineCheckout
         public PaymentController(IPayment payment, IOptions<VnpayConfig> vnpayConfigOption,
             IHttpContextAccessor httpContextAccessor, IAuth iAuth)
         {
-            var authorizationHeader = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
+            string authorizationHeader = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
             this.payment = payment;
             this.vnpayConfig = vnpayConfigOption.Value;
             this.auth = iAuth;
@@ -59,6 +59,7 @@ namespace ShopShoesAPI.OnlineCheckout
             };
         }
 
+
         [HttpGet("vnpay-return")]
         public async Task<IActionResult> VnpayReturn([FromQuery] VnpayResponse response)
         {
@@ -72,8 +73,9 @@ namespace ShopShoesAPI.OnlineCheckout
                 returnUrl = processResult.Item2;
             }
             if (returnUrl.EndsWith("/"))
-                returnUrl = returnUrl.Remove(returnUrl.Length - 1, 1);   
-            return Redirect($"{returnUrl}?{reuturnModel.ToQueryString()}");
+                returnUrl = returnUrl.Remove(returnUrl.Length - 1, 1);
+            //return Redirect($"{returnUrl}?{reuturnModel.ToQueryString()}");
+            return Redirect("https://www.facebook.com/");
         }
 
         [HttpGet("momo-return")]
@@ -90,7 +92,9 @@ namespace ShopShoesAPI.OnlineCheckout
             }
             if (returnUrl.EndsWith("/"))
                 returnUrl = returnUrl.Remove(returnUrl.Length - 1, 1);
-            return Redirect($"{returnUrl}?{reuturnModel.ToQueryString()}");
+            //return Redirect($"{returnUrl}?{reuturnModel.ToQueryString()}");
+            return Redirect("https://www.facebook.com/");
+
         }
 
     }

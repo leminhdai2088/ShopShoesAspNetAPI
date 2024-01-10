@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Payment.Domain.Entities;
+using ShopShoesAPI.cart;
 using ShopShoesAPI.comment;
 using ShopShoesAPI.common;
 using ShopShoesAPI.order;
@@ -27,6 +28,8 @@ namespace ShopShoesAPI.Data
         public DbSet<PaymentNotificationEntity> PaymentNotiEntities { get; set; }
         public DbSet<PaymentSignatureEntity> PaymentSigEntities { get; set; }
         public DbSet<PaymentTransactionEntity> PaymentTransEntities { get; set; }
+        public DbSet<CartEntity> CartEntities { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

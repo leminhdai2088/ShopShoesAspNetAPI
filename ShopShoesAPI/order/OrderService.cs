@@ -29,7 +29,15 @@ namespace ShopShoesAPI.order
         {
             try
             {
-                var cartItems = this.iCart.GetCartItems();
+                //var cartItems = this.iCart.GetCartItems();
+                List<CartDTO> cartItems = new List<CartDTO>();
+
+                CartDTO cart = new CartDTO
+                {
+                    ProductId = 1,
+                    Quantity = 2
+                };
+                cartItems.Add(cart);
                 if (cartItems == null)
                 {
                     throw new Exception("Don't have item in the cart");
