@@ -8,6 +8,7 @@ using ShopShoesAPI.product;
 using ShopShoesAPI.user;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using ShopShoesAPI.common;
 
 namespace ShopShoesAPI.order
 {
@@ -29,15 +30,9 @@ namespace ShopShoesAPI.order
         {
             try
             {
-                //var cartItems = this.iCart.GetCartItems();
-                List<CartDTO> cartItems = new List<CartDTO>();
+                var cartItems = this.iCart.GetCartItems(userId);
 
-                CartDTO cart = new CartDTO
-                {
-                    ProductId = 1,
-                    Quantity = 2
-                };
-                cartItems.Add(cart);
+                
                 if (cartItems == null)
                 {
                     throw new Exception("Don't have item in the cart");
@@ -63,15 +58,20 @@ namespace ShopShoesAPI.order
                 await this.context.SaveChangesAsync();
                 int orderId = order.Id;
                 // Sau khi lưu đơn hàng, lấy order.Id mới được tạo
-                foreach (var item in cartItems)
+                foreach (object item in cartItems)
                 {
-                    var product = await this.context.ProductEntities
-                        .FirstOrDefaultAsync(e => e.Id == item.ProductId);
+                    object product = item.GetValObjDy("product");
+                    var price = product.GetValObjDy("Price");
+                    var productId = product.GetValObjDy("Id");
+
+                    object cartItem = item.GetValObjDy("cart");
+                    var quantity = cartItem.GetValObjDy("Qty");
+
                     var orderDetail = new OrderDetailEntity
                     {
-                        Quantity = item.Quantity,
-                        Total = product.Price * item.Quantity,
-                        ProductId = item.ProductId,
+                        Quantity = (int)quantity,
+                        Total = (float)((float)price * (int)quantity),
+                        ProductId = (int)productId,
                         OrderId = orderId,
                     };
                     await this.context.AddAsync(orderDetail);
@@ -86,7 +86,6 @@ namespace ShopShoesAPI.order
                 throw new Exception(ex.Message);
             }
         }
-
         public IEnumerable<object> GetOrderByUserId(string userId)
         {
             try

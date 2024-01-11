@@ -20,7 +20,7 @@ namespace ShopShoesAPI.cart
             this._context = context;
             this.product = product;
         }
-        public IEnumerable<object> GetCartItems(string userId)
+        public object[] GetCartItems(string userId)
         {
             try
             {
@@ -32,8 +32,9 @@ namespace ShopShoesAPI.cart
                                   cart,
                                   product
                           };
-                return res;
-            }catch(Exception ex)
+                return res.ToArray();
+            }
+            catch(Exception ex)
             {
                 throw new Exception(ex.Message);
             }
