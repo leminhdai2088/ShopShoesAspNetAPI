@@ -75,7 +75,7 @@ namespace ShopShoesAPI.OnlineCheckout
             if (returnUrl.EndsWith("/"))
                 returnUrl = returnUrl.Remove(returnUrl.Length - 1, 1);
             //return Redirect($"{returnUrl}?{reuturnModel.ToQueryString()}");
-            return Redirect("https://www.facebook.com/");
+            return Ok(true);
         }
 
         [HttpGet("momo-return")]
@@ -93,8 +93,7 @@ namespace ShopShoesAPI.OnlineCheckout
             if (returnUrl.EndsWith("/"))
                 returnUrl = returnUrl.Remove(returnUrl.Length - 1, 1);
             //return Redirect($"{returnUrl}?{reuturnModel.ToQueryString()}");
-            return Redirect("https://www.facebook.com/");
-
+            return Ok(true);
         }
 
     }
