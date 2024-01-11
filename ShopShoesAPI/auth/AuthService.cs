@@ -37,11 +37,21 @@ namespace ShopShoesAPI.auth
             this.roleManager = roleManager;
 
             this.redisDatabase = redisConnectionMultiplexer.GetDatabase();
-            this.redisDatabase.StringSet("huhu", "hihi");
         }
 
 
+        public AuthService(UserManager<UserEnityIndetity> userManager)
 
+        {
+            this._appSettings = new AppSettings()
+            {
+                SecretKey = "sjfifuldtzykjgzepydmsvdqgppmrrck",
+                ValidAudience = "User",
+                ValidIssuer = "https://localhost:7296"
+            };
+            this.userManager = userManager;
+
+        }
 
 
         public PayloadTokenDTO VerifyAccessToken(string accressToken)
@@ -192,10 +202,13 @@ namespace ShopShoesAPI.auth
 
                     TimeSpan expiration = TimeSpan.FromDays((int)ExprireTokenEnum.RefreshToken);
 
-                    bool resultSaveTokenToRedis = await this.redisDatabase.StringSetAsync(user.Id, refreshToken, expiration);
-                    if (resultSaveTokenToRedis == false)
+                    if(this.redisDatabase != null)
                     {
-                        throw new Exception("Failed to save refresh token");
+                        bool resultSaveTokenToRedis = await this.redisDatabase.StringSetAsync(user.Id, refreshToken, expiration);
+                        if (resultSaveTokenToRedis == false)
+                        {
+                            throw new Exception("Failed to save refresh token");
+                        }
                     }
 
                     var role = await this.userManager.GetRolesAsync(user);
