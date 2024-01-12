@@ -47,16 +47,16 @@ namespace ShopShoesAPI.admin
             };
         }
 
-        [HttpGet("orders")]
-        public async Task<ApiRespone> FinnAllOrder([FromQuery] QueryAndPaginateDTO queryAndPaginate, 
-            [FromQuery] OrderStatusEnum? status)
-        {
-            return new ApiRespone
-            {
-                Status = (int)HttpStatusCode.OK,
-                Metadata = await this.iAdmin.FindAllOrder(queryAndPaginate, status)
-            };
-        }
+        //[HttpGet("orders")]
+        //public async Task<ApiRespone> FinnAllOrder([FromQuery] QueryAndPaginateDTO queryAndPaginate, 
+        //    [FromQuery] OrderStatusEnum? status)
+        //{
+        //    return new ApiRespone
+        //    {
+        //        Status = (int)HttpStatusCode.OK,
+        //        Metadata = await this.iAdmin.FindAllOrder(queryAndPaginate, status)
+        //    };
+        //}
 
         [HttpDelete("user/{userId}")]
         public async Task<ApiRespone> DeletUserById(string userId)
@@ -130,13 +130,13 @@ namespace ShopShoesAPI.admin
             };
         }
 
-        [HttpPost("get-all-order")]
-        public ApiRespone GetAllOrder()
+        [HttpGet("orders")]
+        public async Task<ApiRespone> GetAllOrder()
         {
             return new ApiRespone
             {
                 Status = (int)HttpStatusCode.OK,
-                Metadata = this.iAdmin.GetAllOrders()
+                Metadata = await this.iAdmin.GetAllOrders()
             };
         }
 

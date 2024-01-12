@@ -224,13 +224,15 @@ namespace ShopShoesAPI.admin
                                      order.Phone,
                                      order.Address,
                                      order.PaymentId,
-                                     order.Status
+                                     order.Status,
+                                     order.createdAt
                                  },
                                  payment = payment != null
                                      ? new
                                      {
                                          payment.Id,
-                                         payment.PaymentLastMessage
+                                         payment.PaymentLastMessage,
+                                         payment.PaymentStatus
                                      }
                                      : null,
                                  des = des != null
@@ -280,13 +282,15 @@ namespace ShopShoesAPI.admin
                                      order.Phone,
                                      order.Address,
                                      order.PaymentId,
-                                     order.Status
+                                     order.Status,
+                                     order.createdAt
                                  },
                                  payment = payment != null
                                      ? new
                                      {
                                          payment.Id,
-                                         payment.PaymentLastMessage
+                                         payment.PaymentLastMessage,
+                                         payment.PaymentStatus  
                                      }
                                      : null,
                                  des = des != null
