@@ -109,7 +109,7 @@ namespace ShopShoesAPI.admin
             };
         }
 
-        [HttpPatch("status")]
+        [HttpPost("status")]
         public async Task<ApiRespone> HandleStatus([FromBody] ChangeStatusDto changeStatus)
         {
             return new ApiRespone

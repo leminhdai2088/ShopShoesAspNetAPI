@@ -345,7 +345,7 @@ namespace ShopShoesAPI.CheckoutServices
                     this.momoConfig.AccessKey, this.momoConfig.SecretKey);
 
             var payment = await this.context.PaymentEntities
-                .FirstOrDefaultAsync(e => e.Id.ToString() == request.orderId);
+                .FirstOrDefaultAsync(e => e.Id.ToString() == request.requestId);
             try
             {   
                 if (isValidSignature)
